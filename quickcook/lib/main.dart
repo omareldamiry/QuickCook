@@ -1,19 +1,50 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-void main() {
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:quickcook/HomePage.dart';
+import 'package:quickcook/auth_service.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'QuickCook',
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-      ),
-      home: LoginPage(),
-    );
+    return MultiProvider(
+        providers: [
+          Provider<AuthService>(
+            create: (_) => AuthService(FirebaseAuth.instance),
+          ),
+          StreamProvider(
+            create: (context) => context.read<AuthService>().authStateChanges,
+          ),
+        ],
+        child: MaterialApp(
+          title: 'QuickCook',
+          theme: ThemeData(
+            primarySwatch: Colors.orange,
+          ),
+          home: AuthWrapper(),
+        ));
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final firebaseUser = context.watch<User>();
+
+    if (firebaseUser != null) {
+      return HomePage();
+    }
+
+    return LoginPage();
   }
 }
 
@@ -22,12 +53,12 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login', style: TextStyle(color: Colors.white),),
+        title: Text(
+          'Login',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
-      body: Container(
-        alignment: Alignment.center,
-        child: LoginForm(),
-      ),
+      body: LoginForm(),
     );
   }
 }
@@ -38,8 +69,40 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  bool _initialized = false;
+  bool _error = false;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  void initializeFlutterFire() async {
+    try {
+      await Firebase.initializeApp();
+      setState(() {
+        _initialized = true;
+      });
+    } catch (e) {
+      setState(() {
+        _error = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    initializeFlutterFire();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_error) {
+      return Center();
+    }
+
+    if (!_initialized) {
+      return Center();
+    }
+
     return Center(
       child: Container(
         alignment: Alignment.center,
@@ -49,8 +112,27 @@ class _LoginFormState extends State<LoginForm> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _customTextFormField(label: 'Enter your email address'),
-              _customTextFormField(label: 'Enter your password', pass: true),
+              TextFormField(
+                controller: emailController,
+                style: TextStyle(fontSize: 15),
+                decoration: InputDecoration(
+                  // border: OutlineInputBorder(
+                  //     borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                  labelText: "Email",
+                  labelStyle: TextStyle(fontSize: 15),
+                ),
+              ),
+              TextFormField(
+                controller: passwordController,
+                obscureText: true,
+                style: TextStyle(fontSize: 15),
+                decoration: InputDecoration(
+                  // border: OutlineInputBorder(
+                  //     borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                  labelText: "Password",
+                  labelStyle: TextStyle(fontSize: 15),
+                ),
+              ),
               ElevatedButton(
                 child: Text('Log in'),
                 style: ButtonStyle(
@@ -60,7 +142,24 @@ class _LoginFormState extends State<LoginForm> {
                   foregroundColor: MaterialStateProperty.all(Colors.white),
                 ),
                 onPressed: () {
-                  setState(() {});
+                  context.read<AuthService>().signIn(
+                      email: emailController.text.trim(),
+                      password: passwordController.text.trim());
+                },
+              ),
+              Text("Or"),
+              ElevatedButton(
+                child: Text('Sign up'),
+                style: ButtonStyle(
+                  padding: MaterialStateProperty.all(
+                    EdgeInsets.only(left: 100, right: 100),
+                  ),
+                  foregroundColor: MaterialStateProperty.all(Colors.white),
+                ),
+                onPressed: () {
+                  context.read<AuthService>().signUp(
+                      email: emailController.text.trim(),
+                      password: passwordController.text.trim());
                 },
               ),
             ],
@@ -70,16 +169,16 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  Widget _customTextFormField({String label = "", bool pass = false}) {
-    return TextFormField(
-      obscureText: pass,
-      style: TextStyle(fontSize: 15),
-      decoration: InputDecoration(
-        // border: OutlineInputBorder(
-        //     borderRadius: BorderRadius.all(Radius.circular(10.0))),
-        labelText: label,
-        labelStyle: TextStyle(fontSize: 15),
-      ),
-    );
-  }
+  // Widget _customTextFormField({String label = "", bool pass = false}) {
+  //   return TextFormField(
+  //     obscureText: pass,
+  //     style: TextStyle(fontSize: 15),
+  //     decoration: InputDecoration(
+  //       // border: OutlineInputBorder(
+  //       //     borderRadius: BorderRadius.all(Radius.circular(10.0))),
+  //       labelText: label,
+  //       labelStyle: TextStyle(fontSize: 15),
+  //     ),
+  //   );
+  // }
 }
