@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/HomePage.dart';
 import 'package:quickcook/auth_service.dart';
+import 'package:quickcook/db_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,8 +24,12 @@ class MyApp extends StatelessWidget {
           Provider<AuthService>(
             create: (_) => AuthService(FirebaseAuth.instance),
           ),
+          Provider<RecipeDA>(
+            create: (_) => RecipeDA(FirebaseFirestore.instance),
+          ),
           StreamProvider(
             create: (context) => context.read<AuthService>().authStateChanges,
+            initialData: null,
           ),
         ],
         child: MaterialApp(
