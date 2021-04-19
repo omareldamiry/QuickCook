@@ -12,7 +12,7 @@ class RecipeDA {
     CollectionReference recipes = _db.collection("recipes");
 
     return recipes
-        .add({'recipeName': "Omelette v2"})
+        .add({'recipeName': "Pancakes"})
         .then((value) => print(value))
         .catchError((err) => print("Failed to add recipe: $err"));
   }
@@ -40,25 +40,6 @@ class RecipeDA {
     );
   }
 
-  // List<Recipe> getRecipes() {
-  //   List<Recipe> recipes = [];
-
-  //   FirebaseFirestore.instance
-  //       .collection('recipes')
-  //       .get()
-  //       .then((QuerySnapshot querySnapshot) {
-  //     querySnapshot.docs.forEach((doc) {
-  //       recipes.add(Recipe(
-  //         recipeName: doc["recipeName"],
-  //       ));
-  //     });
-
-  //     return recipes;
-  //   });
-
-  //   return recipes;
-  // }
-
   FutureBuilder<QuerySnapshot> getRecipes() {
     CollectionReference recipes = _db.collection("recipes");
     List<Recipe> recipeList = [];
@@ -72,13 +53,23 @@ class RecipeDA {
 
           if (snapshot.connectionState == ConnectionState.done) {
             snapshot.data.docs.forEach((doc) {
-              recipeList.add(Recipe(recipeName: doc['recipeName']));
+              recipeList.add(Recipe(id: doc.id, recipeName: doc['recipeName']));
             });
 
-            return Column(children: recipeList);
+            return ListView(children: recipeList);
           }
 
           return CircularProgressIndicator();
         });
+  }
+
+  Future<void> deleteRecipe(id) {
+    CollectionReference recipes = _db.collection("recipes");
+
+    return recipes
+        .doc(id)
+        .delete()
+        .then((value) => print("Recipe deleted"))
+        .catchError((err) => print("Failed to delete recipe: $err"));
   }
 }

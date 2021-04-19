@@ -20,7 +20,8 @@ class _RecipeListState extends State<RecipeList> {
   }
 }
 
-class Recipe extends StatelessWidget {
+class Recipe extends StatefulWidget {
+  final String id;
   final String recipeName;
   final String recipeDesc;
   final int recipePrepTime;
@@ -35,6 +36,7 @@ class Recipe extends StatelessWidget {
 
   const Recipe(
       {Key key,
+      this.id,
       this.recipeName = "Advanced Omelette",
       this.recipeDesc = "Perfectly cooked omelette in a pan",
       this.recipePrepTime = 5,
@@ -47,6 +49,15 @@ class Recipe extends StatelessWidget {
       this.diet = 1,
       this.mealType = 0})
       : super(key: key);
+
+  @override
+  _RecipeState createState() => _RecipeState(this);
+}
+
+class _RecipeState extends State<Recipe> {
+  final Recipe recipe;
+
+  _RecipeState(this.recipe);
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +84,11 @@ class Recipe extends StatelessWidget {
               color: Colors.white,
               alignment: FractionalOffset.topRight,
               icon: Icon(Icons.more_vert_rounded),
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  context.read<RecipeDA>().deleteRecipe(recipe.id);
+                });
+              },
             ),
           ),
           Positioned(
@@ -92,7 +107,7 @@ class Recipe extends StatelessWidget {
               width: screenWidth * 0.8,
               padding: EdgeInsets.all(10),
               child: Text(
-                recipeName, //? Placeholder
+                recipe.recipeName, //? Placeholder
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
