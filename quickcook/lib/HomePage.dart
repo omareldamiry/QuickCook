@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: Recipe(),
+        child: RecipeList(),
       ),
       floatingActionButton: FloatingActionButton(
           child: Icon(
