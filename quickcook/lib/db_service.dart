@@ -40,26 +40,32 @@ class RecipeDA {
     );
   }
 
-  FutureBuilder<QuerySnapshot> getRecipes() {
+  StreamBuilder<QuerySnapshot> getRecipes() {
     CollectionReference recipes = _db.collection("recipes");
-    List<Recipe> recipeList = [];
 
-    return FutureBuilder(
-        future: recipes.get(),
+    return StreamBuilder(
+        stream: recipes.snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return Text("Something went wrong");
           }
 
-          if (snapshot.connectionState == ConnectionState.done) {
-            snapshot.data.docs.forEach((doc) {
-              recipeList.add(Recipe(id: doc.id, recipeName: doc['recipeName']));
-            });
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // snapshot.data.docs.forEach((doc) {
+            //   recipeList.add(Recipe(id: doc.id, recipeName: doc['recipeName']));
+            // });
 
-            return ListView(children: recipeList);
+            return CircularProgressIndicator();
           }
 
-          return CircularProgressIndicator();
+          return new ListView(
+            children: snapshot.data.docs.map((DocumentSnapshot document) {
+              return new Recipe(
+                id: document.id,
+                recipeName: document.data()['recipeName'],
+              );
+            }).toList(),
+          );
         });
   }
 
