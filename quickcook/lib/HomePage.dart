@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quickcook/AddRecipeForm.dart';
 import 'package:quickcook/RecipeHandler.dart';
 import 'package:quickcook/auth_service.dart';
 import 'package:quickcook/db_service.dart';
@@ -13,11 +14,6 @@ class HomePage extends StatelessWidget {
           "QuickCook",
           style: TextStyle(color: Colors.white),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          color: Colors.white,
-          onPressed: () {},
-        ),
         actions: [
           IconButton(
             icon: Icon(Icons.exit_to_app_rounded),
@@ -28,6 +24,40 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text(
+                "QuickCook",
+                style: TextStyle(color: Colors.white),
+              ),
+              decoration: BoxDecoration(
+                color: Colors.orange,
+              ),
+            ),
+            ListTile(
+              title: Text("Home"),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text("My Recipes"),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text("Favorites"),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
       body: Center(
         child: RecipeList(),
       ),
@@ -37,7 +67,11 @@ class HomePage extends StatelessWidget {
             color: Colors.white,
           ),
           onPressed: () {
-            context.read<RecipeDA>().addRecipe();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddRecipe()),
+            );
+            // context.read<RecipeDA>().addRecipe();
           }),
     );
   }
