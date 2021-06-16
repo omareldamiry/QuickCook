@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quickcook/RecipeHandler.dart';
@@ -8,11 +9,14 @@ class RecipeDA {
 
   RecipeDA(this._db);
 
-  Future<void> addRecipe() {
+  Future<void> addRecipe(recipeName) {
     CollectionReference recipes = _db.collection("recipes");
 
     return recipes
-        .add({'recipeName': "Pancakes"})
+        .add({
+          'recipeName': recipeName,
+          'recipeOwner': FirebaseAuth.instance.currentUser.email,
+        })
         .then((value) => print(value))
         .catchError((err) => print("Failed to add recipe: $err"));
   }
@@ -51,14 +55,10 @@ class RecipeDA {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // snapshot.data.docs.forEach((doc) {
-            //   recipeList.add(Recipe(id: doc.id, recipeName: doc['recipeName']));
-            // });
-
             return CircularProgressIndicator();
           }
 
-          return new ListView(
+          return ListView(
             children: snapshot.data.docs.map((DocumentSnapshot document) {
               return new Recipe(
                 id: document.id,
@@ -67,6 +67,17 @@ class RecipeDA {
             }).toList(),
           );
         });
+  }
+
+  Future<void> editRecipe(Recipe recipe) {
+    CollectionReference recipes = _db.collection("recipes");
+
+    return recipes
+        .doc(recipe.id)
+        .set({'recipeName': recipe.recipeName})
+        .then((value) => print("${recipe.recipeName} recipe has been edited"))
+        .catchError(
+            (err) => print("${recipe.recipeName} recipe could not be edited"));
   }
 
   Future<void> deleteRecipe(id) {

@@ -1,17 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:quickcook/RecipeHandler.dart';
 import 'package:quickcook/db_service.dart';
 
-class AddRecipe extends StatelessWidget {
-  final TextEditingController recipeName = TextEditingController();
+class EditRecipe extends StatelessWidget {
+  final Recipe recipe;
+
+  EditRecipe({this.recipe});
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController recipeName =
+        TextEditingController(text: recipe.recipeName);
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "Add New Recipe",
+          "Edit Recipe",
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -22,7 +28,7 @@ class AddRecipe extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                "Add Recipe",
+                "Edit Recipe",
                 style: TextStyle(
                   fontSize: 27,
                   fontWeight: FontWeight.bold,
@@ -54,62 +60,11 @@ class AddRecipe extends StatelessWidget {
           color: Colors.white,
         ),
         onPressed: () {
-          RecipeDA(FirebaseFirestore.instance).addRecipe(recipeName.value.text);
+          recipe.recipeName = recipeName.value.text;
+          RecipeDA(FirebaseFirestore.instance).editRecipe(recipe);
           Navigator.of(context).pop();
         },
       ),
     );
   }
-}
-
-class NumericValueInput extends StatefulWidget {
-  final String unit;
-
-  const NumericValueInput({this.unit = ""});
-
-  @override
-  _NumericValueInputState createState() => _NumericValueInputState(unit);
-}
-
-class _NumericValueInputState extends State<NumericValueInput> {
-  int count = 0;
-  String unit = "";
-
-  _NumericValueInputState(this.unit);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            icon: Icon(
-              Icons.chevron_left,
-              color: Colors.orange,
-            ),
-            onPressed: () {
-              if (count > 0)
-                setState(() {
-                  count--;
-                });
-            },
-          ),
-          Text("$count $unit"),
-          IconButton(
-              icon: Icon(
-                Icons.chevron_right,
-                color: Colors.orange,
-              ),
-              onPressed: () {
-                setState(() {
-                  count++;
-                });
-              }),
-        ],
-      ),
-    );
-  }
-
-  // void _onPressed() {}
 }

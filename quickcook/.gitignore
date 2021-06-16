@@ -9,6 +9,8 @@
 .history
 .svn/
 assets/
+lib/services
+lib/screens/AddRecipeForm.dart
 
 # IntelliJ related
 *.iml

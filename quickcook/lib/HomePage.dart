@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:quickcook/RecipeHandler.dart';
 import 'package:quickcook/auth_service.dart';
 import 'package:quickcook/widgets/drawer.dart';
-import 'package:quickcook/db_service.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/screens/search.dart';
 
@@ -27,9 +25,7 @@ class HomePage extends StatelessWidget {
         ],
       ),
       drawer: MyDrawer(),
-      body: Center(
-        child: RecipeList(),
-      ),
+      body: Center(),
       floatingActionButton: FloatingActionButton(
           child: Icon(
             Icons.search,

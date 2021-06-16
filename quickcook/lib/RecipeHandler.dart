@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quickcook/AddRecipeForm.dart';
 import 'package:quickcook/db_service.dart';
+import 'package:quickcook/screens/EditRecipeForm.dart';
 
 class RecipeList extends StatefulWidget {
   @override
@@ -21,24 +23,24 @@ class _RecipeListState extends State<RecipeList> {
 }
 
 class Recipe extends StatefulWidget {
-  final String id;
-  final String recipeName;
-  final String recipeDesc;
-  final int recipePrepTime;
-  final int recipeCal;
-  final String recipeVidLink;
-  final List<int> recipeIngredients;
-  final double recipeRating;
-  final String recipeOwner;
-  final int cuisine;
-  final int diet;
-  final int mealType;
+  String id;
+  String recipeName;
+  String recipeDesc;
+  int recipePrepTime;
+  int recipeCal;
+  String recipeVidLink;
+  List<int> recipeIngredients;
+  double recipeRating;
+  String recipeOwner;
+  int cuisine;
+  int diet;
+  int mealType;
 
-  const Recipe(
+  Recipe(
       {Key key,
       this.id,
-      this.recipeName = "Advanced Omelette",
-      this.recipeDesc = "Perfectly cooked omelette in a pan",
+      this.recipeName,
+      this.recipeDesc = "Perfectly cooked in a pan",
       this.recipePrepTime = 5,
       this.recipeCal = 20,
       this.recipeVidLink = "https://youtu.be/dummylink",
@@ -47,8 +49,15 @@ class Recipe extends StatefulWidget {
       this.recipeOwner = "test@gmail.com",
       this.cuisine = 1,
       this.diet = 1,
-      this.mealType = 0})
-      : super(key: key);
+      this.mealType = 0});
+
+  String get name {
+    return this.recipeName;
+  }
+
+  set name(String value) {
+    this.recipeName = value;
+  }
 
   @override
   _RecipeState createState() => _RecipeState(this);
@@ -71,6 +80,7 @@ class _RecipeState extends State<Recipe> {
           Container(
             width: screenWidth * 0.8,
             height: 200,
+            alignment: Alignment.topRight,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
               image: DecorationImage(
@@ -79,15 +89,35 @@ class _RecipeState extends State<Recipe> {
                 image: new AssetImage("assets/img/pancake.jpg"), //? Placeholder
               ),
             ),
-            child: IconButton(
-              padding: EdgeInsets.all(15),
-              color: Colors.white,
-              alignment: FractionalOffset.topRight,
-              icon: Icon(Icons.more_vert_rounded),
-              onPressed: () {
-                setState(() {
-                  context.read<RecipeDA>().deleteRecipe(recipe.id);
-                });
+            child: PopupMenuButton(
+              icon: Icon(
+                Icons.more_vert_rounded,
+                color: Colors.white,
+              ),
+              itemBuilder: (context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem(
+                  value: "Edit",
+                  child: Text("Edit"),
+                ),
+                const PopupMenuItem(
+                  value: "Delete",
+                  child: Text(
+                    "Delete",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+              onSelected: (String value) {
+                if (value.compareTo("Edit") == 0) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => EditRecipe(
+                            recipe: recipe,
+                          )));
+                } else if (value.compareTo("Delete") == 0) {
+                  setState(() {
+                    context.read<RecipeDA>().deleteRecipe(recipe.id);
+                  });
+                }
               },
             ),
           ),
@@ -118,3 +148,4 @@ class _RecipeState extends State<Recipe> {
     );
   }
 }
+// context.read<RecipeDA>().deleteRecipe(recipe.id);

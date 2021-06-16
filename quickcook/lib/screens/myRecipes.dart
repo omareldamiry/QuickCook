@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:quickcook/AddRecipeForm.dart';
+import 'package:quickcook/RecipeHandler.dart';
 import 'package:quickcook/widgets/drawer.dart';
 
 class MyRecipesPage extends StatelessWidget {
@@ -13,6 +15,20 @@ class MyRecipesPage extends StatelessWidget {
         ),
       ),
       drawer: MyDrawer(),
+      body: Container(
+        alignment: Alignment.center,
+        child: RecipeList(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => AddRecipe()));
+        },
+      ),
     );
   }
 }
