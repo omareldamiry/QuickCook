@@ -51,8 +51,14 @@ class _MyRecipeListState extends State<MyRecipeList> {
     return Container(
       width: screenWidth * 0.8,
       margin: EdgeInsets.only(top: 20),
-      child: context.read<RecipeDA>().getMyRecipes(),
+      child: context.read<RecipeDA>().getMyRecipes(refresh),
     );
+  }
+
+  void refresh() {
+    setState(() {
+      print("Hello from MyRecipeList!");
+    });
   }
 }
 
@@ -70,6 +76,8 @@ class Recipe extends StatefulWidget {
   int diet;
   int mealType;
 
+  Function parentRefresh;
+
   Recipe(
       {Key key,
       this.id,
@@ -83,7 +91,8 @@ class Recipe extends StatefulWidget {
       this.recipeOwner,
       this.cuisine = 1,
       this.diet = 1,
-      this.mealType = 0});
+      this.mealType = 0,
+      this.parentRefresh});
 
   String get name {
     return this.recipeName;
@@ -161,14 +170,13 @@ class _RecipeState extends State<Recipe> {
                             recipe: recipe,
                           )));
                 } else if (value.compareTo("Delete") == 0) {
-                  context
-                      .read<RecipeDA>()
-                      .deleteRecipe(recipe.id)
-                      .whenComplete(() {
-                    setState(() {
-                      print("${recipe.recipeName} ${recipe.id} deleted");
-                    });
-                  });
+                  context.read<RecipeDA>().deleteRecipe(recipe.id);
+                  // setState(() {
+                  //   print("${recipe.recipeName} ${recipe.id} deleted");
+                  //   recipe.parentRefresh();
+                  // });
+                  print("${recipe.recipeName} deleted");
+                  recipe.parentRefresh();
                 }
               },
             ),

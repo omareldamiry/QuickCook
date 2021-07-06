@@ -71,7 +71,7 @@ class RecipeDA {
         });
   }
 
-  StreamBuilder<QuerySnapshot> getMyRecipes() {
+  StreamBuilder<QuerySnapshot> getMyRecipes(Function refresh) {
     String user = FirebaseAuth.instance.currentUser.email;
     Query recipes =
         _db.collection("recipes").where("recipeOwner", isEqualTo: user);
@@ -94,6 +94,7 @@ class RecipeDA {
                 id: document.id,
                 recipeName: document.data()['recipeName'],
                 recipeOwner: document.data()['recipeOwner'],
+                parentRefresh: refresh,
               );
             }).toList(),
           );
