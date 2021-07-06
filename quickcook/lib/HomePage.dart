@@ -4,6 +4,8 @@ import 'package:quickcook/widgets/drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/screens/search.dart';
 
+import 'RecipeHandler.dart';
+
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,9 @@ class HomePage extends StatelessWidget {
         ],
       ),
       drawer: MyDrawer(),
-      body: Center(),
+      body: Center(
+        child: RecipeList()
+      ),
       floatingActionButton: FloatingActionButton(
           child: Icon(
             Icons.search,

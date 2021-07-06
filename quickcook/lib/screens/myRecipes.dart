@@ -3,7 +3,12 @@ import 'package:quickcook/AddRecipeForm.dart';
 import 'package:quickcook/RecipeHandler.dart';
 import 'package:quickcook/widgets/drawer.dart';
 
-class MyRecipesPage extends StatelessWidget {
+class MyRecipesPage extends StatefulWidget {
+  @override
+  _MyRecipesPage createState() => _MyRecipesPage();
+}
+
+class _MyRecipesPage extends State<MyRecipesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +22,7 @@ class MyRecipesPage extends StatelessWidget {
       drawer: MyDrawer(),
       body: Container(
         alignment: Alignment.center,
-        child: RecipeList(),
+        child: MyRecipeList(),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(
@@ -25,7 +30,7 @@ class MyRecipesPage extends StatelessWidget {
           color: Colors.white,
         ),
         onPressed: () {
-          Navigator.push(
+          Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => AddRecipe()));
         },
       ),

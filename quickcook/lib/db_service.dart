@@ -58,11 +58,42 @@ class RecipeDA {
             return CircularProgressIndicator();
           }
 
-          return ListView(
+          return new ListView(
             children: snapshot.data.docs.map((DocumentSnapshot document) {
               return new Recipe(
+                key: Key(document.id),
                 id: document.id,
                 recipeName: document.data()['recipeName'],
+                recipeOwner: document.data()['recipeOwner'],
+              );
+            }).toList(),
+          );
+        });
+  }
+
+  StreamBuilder<QuerySnapshot> getMyRecipes() {
+    String user = FirebaseAuth.instance.currentUser.email;
+    Query recipes =
+        _db.collection("recipes").where("recipeOwner", isEqualTo: user);
+
+    return StreamBuilder(
+        stream: recipes.snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text("Something went wrong");
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          }
+
+          return ListView(
+            children: snapshot.data.docs.map((DocumentSnapshot document) {
+              return Recipe(
+                key: Key(document.id),
+                id: document.id,
+                recipeName: document.data()['recipeName'],
+                recipeOwner: document.data()['recipeOwner'],
               );
             }).toList(),
           );
@@ -72,21 +103,37 @@ class RecipeDA {
   Future<void> editRecipe(Recipe recipe) {
     CollectionReference recipes = _db.collection("recipes");
 
+    if (FirebaseAuth.instance.currentUser.email.compareTo(recipe.recipeOwner) !=
+        0) {
+      return null;
+    }
+
     return recipes
         .doc(recipe.id)
-        .set({'recipeName': recipe.recipeName})
+        .set({
+          'recipeName': recipe.recipeName,
+          'recipeOwner': recipe.recipeOwner,
+        })
         .then((value) => print("${recipe.recipeName} recipe has been edited"))
         .catchError(
             (err) => print("${recipe.recipeName} recipe could not be edited"));
   }
 
-  Future<void> deleteRecipe(id) {
+  Future<void> deleteRecipe(String id) {
     CollectionReference recipes = _db.collection("recipes");
 
-    return recipes
+    print(recipes.doc(id).id);
+
+    recipes
         .doc(id)
         .delete()
         .then((value) => print("Recipe deleted"))
         .catchError((err) => print("Failed to delete recipe: $err"));
+
+    // return recipes
+    //     .doc(id)
+    //     .delete()
+    //     .then((value) => print("Recipe deleted"))
+    //     .catchError((err) => print("Failed to delete recipe: $err"));
   }
 }

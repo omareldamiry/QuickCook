@@ -1,8 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:quickcook/AddRecipeForm.dart';
 import 'package:quickcook/db_service.dart';
 import 'package:quickcook/screens/EditRecipeForm.dart';
+
+enum Ingredients {
+  EGGS,
+  HONEY,
+  FLOUR,
+  SUGAR,
+  SALT,
+  BUTTER,
+  MILK,
+  BEANS,
+  OLIVE_OIL,
+  PEPPER,
+  TOMATOES
+}
 
 class RecipeList extends StatefulWidget {
   @override
@@ -22,6 +36,26 @@ class _RecipeListState extends State<RecipeList> {
   }
 }
 
+class MyRecipeList extends StatefulWidget {
+  const MyRecipeList({Key key}) : super(key: key);
+
+  @override
+  _MyRecipeListState createState() => _MyRecipeListState();
+}
+
+class _MyRecipeListState extends State<MyRecipeList> {
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    return Container(
+      width: screenWidth * 0.8,
+      margin: EdgeInsets.only(top: 20),
+      child: context.read<RecipeDA>().getMyRecipes(),
+    );
+  }
+}
+
 class Recipe extends StatefulWidget {
   String id;
   String recipeName;
@@ -29,7 +63,7 @@ class Recipe extends StatefulWidget {
   int recipePrepTime;
   int recipeCal;
   String recipeVidLink;
-  List<int> recipeIngredients;
+  List<Ingredients> recipeIngredients;
   double recipeRating;
   String recipeOwner;
   int cuisine;
@@ -46,7 +80,7 @@ class Recipe extends StatefulWidget {
       this.recipeVidLink = "https://youtu.be/dummylink",
       this.recipeIngredients,
       this.recipeRating = 0.0,
-      this.recipeOwner = "test@gmail.com",
+      this.recipeOwner,
       this.cuisine = 1,
       this.diet = 1,
       this.mealType = 0});
@@ -72,6 +106,8 @@ class _RecipeState extends State<Recipe> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
+    print(recipe.recipeName);
+
     return Container(
       margin: EdgeInsets.only(bottom: 30),
       child: Stack(
@@ -94,19 +130,30 @@ class _RecipeState extends State<Recipe> {
                 Icons.more_vert_rounded,
                 color: Colors.white,
               ),
-              itemBuilder: (context) => <PopupMenuEntry<String>>[
-                const PopupMenuItem(
-                  value: "Edit",
-                  child: Text("Edit"),
-                ),
-                const PopupMenuItem(
-                  value: "Delete",
-                  child: Text(
-                    "Delete",
-                    style: TextStyle(color: Colors.red),
+              itemBuilder: (context) {
+                if (FirebaseAuth.instance.currentUser.email
+                        .compareTo(recipe.recipeOwner) !=
+                    0) {
+                  return <PopupMenuEntry<String>>[
+                    const PopupMenuItem(
+                      child: Text("Add to favourites"),
+                    ),
+                  ];
+                }
+                return <PopupMenuEntry<String>>[
+                  const PopupMenuItem(
+                    value: "Edit",
+                    child: Text("Edit"),
                   ),
-                ),
-              ],
+                  const PopupMenuItem(
+                    value: "Delete",
+                    child: Text(
+                      "Delete",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ];
+              },
               onSelected: (String value) {
                 if (value.compareTo("Edit") == 0) {
                   Navigator.of(context).push(MaterialPageRoute(
@@ -114,8 +161,13 @@ class _RecipeState extends State<Recipe> {
                             recipe: recipe,
                           )));
                 } else if (value.compareTo("Delete") == 0) {
-                  setState(() {
-                    context.read<RecipeDA>().deleteRecipe(recipe.id);
+                  context
+                      .read<RecipeDA>()
+                      .deleteRecipe(recipe.id)
+                      .whenComplete(() {
+                    setState(() {
+                      print("${recipe.recipeName} ${recipe.id} deleted");
+                    });
                   });
                 }
               },
@@ -137,7 +189,7 @@ class _RecipeState extends State<Recipe> {
               width: screenWidth * 0.8,
               padding: EdgeInsets.all(10),
               child: Text(
-                recipe.recipeName, //? Placeholder
+                "${recipe.recipeName} ${recipe.id}", //? Placeholder
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),

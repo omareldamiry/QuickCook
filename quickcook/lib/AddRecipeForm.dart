@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:quickcook/db_service.dart';
+import 'package:quickcook/screens/myRecipes.dart';
 
 class AddRecipe extends StatelessWidget {
   final TextEditingController recipeName = TextEditingController();
@@ -55,7 +56,8 @@ class AddRecipe extends StatelessWidget {
         ),
         onPressed: () {
           RecipeDA(FirebaseFirestore.instance).addRecipe(recipeName.value.text);
-          Navigator.of(context).pop();
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => MyRecipesPage()));
         },
       ),
     );
