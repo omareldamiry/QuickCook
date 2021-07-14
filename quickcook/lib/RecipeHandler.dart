@@ -19,11 +19,18 @@ enum Ingredients {
 }
 
 class RecipeList extends StatefulWidget {
+  List<int> ingredientsQuery = [];
+
+  RecipeList({this.ingredientsQuery});
+
   @override
-  _RecipeListState createState() => _RecipeListState();
+  _RecipeListState createState() => _RecipeListState(ingredientsQuery);
 }
 
 class _RecipeListState extends State<RecipeList> {
+  List<int> ingredientsQuery;
+  _RecipeListState(this.ingredientsQuery);
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -31,7 +38,7 @@ class _RecipeListState extends State<RecipeList> {
     return Container(
       width: screenWidth * 0.8,
       margin: EdgeInsets.only(top: 20),
-      child: context.read<RecipeDA>().getRecipes(),
+      child: context.read<RecipeDA>().getRecipes(query: ingredientsQuery),
     );
   }
 }
@@ -69,7 +76,7 @@ class Recipe extends StatefulWidget {
   int recipePrepTime;
   int recipeCal;
   String recipeVidLink;
-  List<Ingredients> recipeIngredients;
+  List<dynamic> recipeIngredients;
   double recipeRating;
   String recipeOwner;
   int cuisine;
@@ -190,14 +197,14 @@ class _RecipeState extends State<Recipe> {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.8),
-                      spreadRadius: 5,
-                      blurRadius: 7,
+                      spreadRadius: 1,
+                      blurRadius: 3,
                     )
                   ]),
               width: screenWidth * 0.8,
               padding: EdgeInsets.all(10),
               child: Text(
-                "${recipe.recipeName} ${recipe.id}", //? Placeholder
+                "${recipe.recipeName}", //? Placeholder
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),

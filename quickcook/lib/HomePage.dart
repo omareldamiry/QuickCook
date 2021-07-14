@@ -7,6 +7,10 @@ import 'package:quickcook/screens/search.dart';
 import 'RecipeHandler.dart';
 
 class HomePage extends StatelessWidget {
+  List<int> ingredientQuery = [];
+
+  HomePage({this.ingredientQuery});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,9 +31,7 @@ class HomePage extends StatelessWidget {
         ],
       ),
       drawer: MyDrawer(),
-      body: Center(
-        child: RecipeList()
-      ),
+      body: Center(child: RecipeList(ingredientsQuery: ingredientQuery)),
       floatingActionButton: FloatingActionButton(
           child: Icon(
             Icons.search,

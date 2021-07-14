@@ -44,11 +44,12 @@ class RecipeDA {
     );
   }
 
-  StreamBuilder<QuerySnapshot> getRecipes() {
+  // ignore: avoid_init_to_null
+  FutureBuilder<QuerySnapshot> getRecipes({List<int> query = null}) {
     CollectionReference recipes = _db.collection("recipes");
 
-    return StreamBuilder(
-        stream: recipes.snapshots(),
+    return FutureBuilder<QuerySnapshot>(
+        future: recipes.where('ingredients', arrayContainsAny: query).get(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return Text("Something went wrong");
@@ -89,11 +90,13 @@ class RecipeDA {
 
           return ListView(
             children: snapshot.data.docs.map((DocumentSnapshot document) {
+              print(document.data());
               return Recipe(
                 key: Key(document.id),
                 id: document.id,
                 recipeName: document.data()['recipeName'],
                 recipeOwner: document.data()['recipeOwner'],
+                recipeIngredients: document.data()['ingredients'],
                 parentRefresh: refresh,
               );
             }).toList(),
