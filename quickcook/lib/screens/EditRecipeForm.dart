@@ -62,6 +62,7 @@ class EditRecipe extends StatelessWidget {
         onPressed: () {
           recipe.recipeName = recipeName.value.text;
           RecipeDA(FirebaseFirestore.instance).editRecipe(recipe);
+          recipe.parentRefresh();
           Navigator.of(context).pop();
         },
       ),

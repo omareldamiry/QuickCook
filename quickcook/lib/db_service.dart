@@ -58,17 +58,20 @@ class RecipeDA {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator();
           }
+          if (snapshot.data.docs.isNotEmpty) {
+            return new ListView(
+              children: snapshot.data.docs.map((DocumentSnapshot document) {
+                return new Recipe(
+                  key: Key(document.id),
+                  id: document.id,
+                  recipeName: document.data()['recipeName'],
+                  recipeOwner: document.data()['recipeOwner'],
+                );
+              }).toList(),
+            );
+          }
 
-          return new ListView(
-            children: snapshot.data.docs.map((DocumentSnapshot document) {
-              return new Recipe(
-                key: Key(document.id),
-                id: document.id,
-                recipeName: document.data()['recipeName'],
-                recipeOwner: document.data()['recipeOwner'],
-              );
-            }).toList(),
-          );
+          return Text('No recipes');
         });
   }
 
@@ -96,7 +99,8 @@ class RecipeDA {
                 id: document.id,
                 recipeName: document.data()['recipeName'],
                 recipeOwner: document.data()['recipeOwner'],
-                recipeIngredients: document.data()['ingredients'],
+                recipeIngredients:
+                    document.data()['ingredients'].cast<Ingredients>(),
                 parentRefresh: refresh,
               );
             }).toList(),
@@ -117,6 +121,7 @@ class RecipeDA {
         .set({
           'recipeName': recipe.recipeName,
           'recipeOwner': recipe.recipeOwner,
+          'ingredients': recipe.recipeIngredients.cast<int>(),
         })
         .then((value) => print("${recipe.recipeName} recipe has been edited"))
         .catchError(
@@ -133,11 +138,5 @@ class RecipeDA {
         .delete()
         .then((value) => print("Recipe deleted"))
         .catchError((err) => print("Failed to delete recipe: $err"));
-
-    // return recipes
-    //     .doc(id)
-    //     .delete()
-    //     .then((value) => print("Recipe deleted"))
-    //     .catchError((err) => print("Failed to delete recipe: $err"));
   }
 }

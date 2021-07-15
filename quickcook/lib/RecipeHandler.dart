@@ -76,7 +76,7 @@ class Recipe extends StatefulWidget {
   int recipePrepTime;
   int recipeCal;
   String recipeVidLink;
-  List<dynamic> recipeIngredients;
+  List<Ingredients> recipeIngredients;
   double recipeRating;
   String recipeOwner;
   int cuisine;
