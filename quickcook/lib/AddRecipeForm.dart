@@ -1,10 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:quickcook/db_service.dart';
+import 'package:quickcook/screens/AddIngredients.dart';
 import 'package:quickcook/screens/myRecipes.dart';
+import 'package:quickcook/utilities/Ingredients.dart';
+
+import 'RecipeHandler.dart';
 
 class AddRecipe extends StatelessWidget {
   final TextEditingController recipeName = TextEditingController();
+  final List<Ingredients> ingredientsList = [];
+  final IngredientInput ingredientInput = IngredientInput();
 
   @override
   Widget build(BuildContext context) {
@@ -35,16 +41,19 @@ class AddRecipe extends StatelessWidget {
                 margin: EdgeInsets.only(top: 10, bottom: 20),
                 width: MediaQuery.of(context).size.width * 0.8,
                 alignment: Alignment.center,
-                child: TextFormField(
-                  controller: recipeName,
-                  maxLength: 50,
-                  decoration: InputDecoration(
-                    labelText: "Recipe Name",
-                  ),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: recipeName,
+                      maxLength: 50,
+                      decoration: InputDecoration(
+                        labelText: "Recipe Name",
+                      ),
+                    ),
+                    ingredientInput,
+                  ],
                 ),
               ),
-
-              // Ingredient choice will go here
             ],
           ),
         ),
@@ -55,12 +64,70 @@ class AddRecipe extends StatelessWidget {
           color: Colors.white,
         ),
         onPressed: () {
-          RecipeDA(FirebaseFirestore.instance).addRecipe(recipeName.value.text);
+          // TODO: Modify this function to pass a Recipe object
+          Recipe newRecipe = Recipe(
+            recipeName: recipeName.value.text,
+            recipeIngredients: ingredientInput.ingredients,
+          );
+          RecipeDA(FirebaseFirestore.instance).addRecipe(newRecipe);
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => MyRecipesPage()));
         },
       ),
     );
+  }
+}
+
+class IngredientInput extends StatefulWidget {
+  List<Ingredients> ingredients = [];
+
+  IngredientInput({Key key, this.ingredients}) : super(key: key);
+
+  void newIngredients(List<Ingredients> _ingredients) {
+    ingredients = _ingredients;
+  }
+
+  @override
+  _IngredientInputState createState() =>
+      _IngredientInputState(ingredients: ingredients);
+}
+
+class _IngredientInputState extends State<IngredientInput> {
+  List<Ingredients> ingredients;
+  int ingredientCount = 0;
+
+  _IngredientInputState({List<Ingredients> ingredients});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text("$ingredientCount selected"),
+        TextButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.orange[100]),
+          ),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        AddIngredients(parentRefresh: refresh)));
+          },
+          child: Text("Add Ingredients"),
+        ),
+      ],
+    );
+  }
+
+  void refresh(List<Ingredients> _ingredients) {
+    setState(() {
+      ingredients = _ingredients;
+      ingredientCount = _ingredients.length;
+      super.widget.newIngredients(_ingredients);
+      // print(ingredients);
+    });
   }
 }
 

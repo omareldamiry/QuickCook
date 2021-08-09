@@ -3,20 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/db_service.dart';
 import 'package:quickcook/screens/EditRecipeForm.dart';
-
-enum Ingredients {
-  EGGS,
-  HONEY,
-  FLOUR,
-  SUGAR,
-  SALT,
-  BUTTER,
-  MILK,
-  BEANS,
-  OLIVE_OIL,
-  PEPPER,
-  TOMATOES
-}
+import 'package:quickcook/utilities/Ingredients.dart';
 
 class RecipeList extends StatefulWidget {
   List<int> ingredientsQuery = [];

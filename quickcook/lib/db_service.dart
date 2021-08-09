@@ -4,45 +4,63 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quickcook/RecipeHandler.dart';
 
+import 'utilities/Ingredients.dart';
+
 class RecipeDA {
   final FirebaseFirestore _db;
 
   RecipeDA(this._db);
 
-  Future<void> addRecipe(recipeName) {
+  // Future<void> addRecipe(recipeName) {
+  //   CollectionReference recipes = _db.collection("recipes");
+
+  //   return recipes
+  //       .add({
+  //         'recipeName': recipeName,
+  //         'recipeOwner': FirebaseAuth.instance.currentUser.email,
+  //       })
+  //       .then((value) => print(value))
+  //       .catchError((err) => print("Failed to add recipe: $err"));
+  // }
+
+  Future<void> addRecipe(Recipe recipe) {
     CollectionReference recipes = _db.collection("recipes");
+
+    List<int> ingredients =
+        recipe.recipeIngredients.map((e) => e.index).toList();
 
     return recipes
         .add({
-          'recipeName': recipeName,
+          'recipeName': recipe.recipeName,
+          'ingredients': ingredients,
           'recipeOwner': FirebaseAuth.instance.currentUser.email,
         })
         .then((value) => print(value))
         .catchError((err) => print("Failed to add recipe: $err"));
   }
 
-  FutureBuilder<DocumentSnapshot> getRecipe() {
-    CollectionReference recipes = _db.collection("recipes");
+  // FutureBuilder<DocumentSnapshot> getRecipe() {
+  //   CollectionReference recipes = _db.collection("recipes");
 
-    return FutureBuilder<DocumentSnapshot>(
-      future: recipes.doc("ABC123").get(),
-      builder:
-          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        if (snapshot.hasError) {
-          return Text("Something went wrong");
-        }
+  //   return FutureBuilder<DocumentSnapshot>(
+  //     future: recipes.doc("ABC123").get(),
+  //     builder:
+  //         (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+  //       if (snapshot.hasError) {
+  //         return Text("Something went wrong");
+  //       }
 
-        if (snapshot.connectionState == ConnectionState.done) {
-          Map<String, dynamic> data = snapshot.data.data();
-          return Recipe(
-            recipeName: data['recipeName'],
-          );
-        }
+  //       if (snapshot.connectionState == ConnectionState.done) {
+  //         Map<String, dynamic> data = snapshot.data.data();
+  //         return Recipe(
+  //           recipeName: data['recipeName'],
+  //         );
+  //       }
 
-        return CircularProgressIndicator();
-      },
-    );
-  }
+  //       return CircularProgressIndicator();
+  //     },
+  //   );
+  // }
 
   // ignore: avoid_init_to_null
   FutureBuilder<QuerySnapshot> getRecipes({List<int> query = null}) {
@@ -133,7 +151,7 @@ class RecipeDA {
 
     print(recipes.doc(id).id);
 
-    recipes
+    return recipes
         .doc(id)
         .delete()
         .then((value) => print("Recipe deleted"))

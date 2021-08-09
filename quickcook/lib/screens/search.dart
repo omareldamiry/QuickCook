@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quickcook/HomePage.dart';
-import 'package:quickcook/RecipeHandler.dart';
+import 'package:quickcook/utilities/Ingredients.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -68,41 +68,37 @@ class _SearchPage extends State<SearchPage> {
 class IngredientTile extends StatefulWidget {
   String title;
   int index;
-  bool value = false;
-  IngredientTile({Key key, this.title, this.index}) : super(key: key);
+  bool isChecked;
+  IngredientTile({Key key, this.title, this.index, this.isChecked = false})
+      : super(key: key);
 
   get isTrue {
-    return value;
+    return isChecked;
   }
 
   void newValue(bool newValue) {
-    this.value = newValue;
+    this.isChecked = newValue;
   }
 
   @override
-  _IngredientTileState createState() => _IngredientTileState(
-        title: title,
-      );
+  _IngredientTileState createState() =>
+      _IngredientTileState(title: title, changed: isChecked);
 }
 
 class _IngredientTileState extends State<IngredientTile> {
   String title;
-  bool _changed = false;
+  bool changed = false;
 
-  _IngredientTileState({
-    this.title,
-  });
+  _IngredientTileState({this.title, this.changed});
 
   @override
   Widget build(BuildContext context) {
     return CheckboxListTile(
-      value: _changed,
+      value: changed,
       onChanged: (bool value) {
-        super.widget.newValue(_changed);
-        print(super.widget.title);
         setState(() {
-          _changed = value;
-          super.widget.newValue(_changed);
+          changed = value;
+          super.widget.newValue(changed);
         });
       },
       title: Text("$title"),
