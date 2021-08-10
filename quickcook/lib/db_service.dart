@@ -39,28 +39,18 @@ class RecipeDA {
         .catchError((err) => print("Failed to add recipe: $err"));
   }
 
-  // FutureBuilder<DocumentSnapshot> getRecipe() {
-  //   CollectionReference recipes = _db.collection("recipes");
+  Future<Recipe> getRecipe(String id) {
+    CollectionReference recipes = _db.collection("recipes");
 
-  //   return FutureBuilder<DocumentSnapshot>(
-  //     future: recipes.doc("ABC123").get(),
-  //     builder:
-  //         (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-  //       if (snapshot.hasError) {
-  //         return Text("Something went wrong");
-  //       }
-
-  //       if (snapshot.connectionState == ConnectionState.done) {
-  //         Map<String, dynamic> data = snapshot.data.data();
-  //         return Recipe(
-  //           recipeName: data['recipeName'],
-  //         );
-  //       }
-
-  //       return CircularProgressIndicator();
-  //     },
-  //   );
-  // }
+    return recipes.doc(id).get().then<Recipe>((value) {
+      return Recipe(
+        id: value.id,
+        recipeName: value.data()["recipeName"],
+        recipeIngredients: value.data()["ingredients"],
+        recipeOwner: value.data()['recipeOwner'],
+      );
+    });
+  }
 
   // ignore: avoid_init_to_null
   FutureBuilder<QuerySnapshot> getRecipes({List<int> query = null}) {
