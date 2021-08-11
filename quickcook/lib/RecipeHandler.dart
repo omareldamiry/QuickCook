@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/db_service.dart';
+import 'package:quickcook/models/Comment.dart';
 import 'package:quickcook/screens/EditRecipeForm.dart';
 import 'package:quickcook/screens/RecipeDetails.dart';
 import 'package:quickcook/utilities/Ingredients.dart';
@@ -70,6 +71,7 @@ class Recipe extends StatefulWidget {
   int cuisine;
   int diet;
   int mealType;
+  List<Comment> comments;
 
   Function parentRefresh;
 
@@ -87,6 +89,7 @@ class Recipe extends StatefulWidget {
       this.cuisine = 1,
       this.diet = 1,
       this.mealType = 0,
+      this.comments,
       this.parentRefresh});
 
   String get name {
@@ -184,7 +187,7 @@ class _RecipeState extends State<Recipe> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RecipeDetails(context, recipe.id),
+                    builder: (context) => RecipeDetailsPage(context, recipe.id),
                   ),
                 );
               },

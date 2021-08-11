@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quickcook/RecipeHandler.dart';
 
@@ -39,16 +39,11 @@ class RecipeDA {
         .catchError((err) => print("Failed to add recipe: $err"));
   }
 
-  Future<Recipe> getRecipe(String id) {
+  Future<DocumentSnapshot> getRecipe(String id) {
     CollectionReference recipes = _db.collection("recipes");
 
     return recipes.doc(id).get().then((value) {
-      return Recipe(
-        id: value.id,
-        recipeName: value.data()["recipeName"],
-        recipeIngredients: value.data()["ingredients"],
-        recipeOwner: value.data()['recipeOwner'],
-      );
+      return value;
     });
   }
 
@@ -108,7 +103,7 @@ class RecipeDA {
                 recipeName: document.data()['recipeName'],
                 recipeOwner: document.data()['recipeOwner'],
                 recipeIngredients:
-                    document.data()['ingredients'].cast<Ingredients>(),
+                    document.data()['ingredients'],
                 parentRefresh: refresh,
               );
             }).toList(),
