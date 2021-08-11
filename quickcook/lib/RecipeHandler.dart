@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/db_service.dart';
 import 'package:quickcook/screens/EditRecipeForm.dart';
+import 'package:quickcook/screens/RecipeDetails.dart';
 import 'package:quickcook/utilities/Ingredients.dart';
 
 class RecipeList extends StatefulWidget {
@@ -122,11 +123,12 @@ class _RecipeState extends State<Recipe> {
             alignment: Alignment.topRight,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
-              image: DecorationImage(
-                alignment: FractionalOffset.center,
-                fit: BoxFit.fitWidth,
-                image: new AssetImage("assets/img/pancake.jpg"), //? Placeholder
-              ),
+              color: Colors.orange[200],
+              // image: DecorationImage(
+              //   alignment: FractionalOffset.center,
+              //   fit: BoxFit.fitWidth,
+              //   image: new AssetImage("assets/img/pancake.jpg"), //? Placeholder
+              // ),
             ),
             child: PopupMenuButton(
               icon: Icon(
@@ -177,23 +179,33 @@ class _RecipeState extends State<Recipe> {
           ),
           Positioned(
             bottom: -10,
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.8),
-                      spreadRadius: 1,
-                      blurRadius: 3,
-                    )
-                  ]),
-              width: screenWidth * 0.8,
-              padding: EdgeInsets.all(10),
-              child: Text(
-                "${recipe.recipeName}", //? Placeholder
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RecipeDetails(context, recipe.id),
+                  ),
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.8),
+                        spreadRadius: 1,
+                        blurRadius: 3,
+                      )
+                    ]),
+                width: screenWidth * 0.8,
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  "${recipe.recipeName}", //? Placeholder
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ),

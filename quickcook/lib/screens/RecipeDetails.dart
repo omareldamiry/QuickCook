@@ -6,9 +6,7 @@ import 'package:quickcook/db_service.dart';
 class RecipeDetails extends StatelessWidget {
   final String id;
   final BuildContext context;
-  RecipeDetails(this.context, this.id){
-    
-  }
+  RecipeDetails(this.context, this.id);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +19,25 @@ class RecipeDetails extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
       ),
-      body: Container(),
+      body: Container(
+        child: FutureBuilder(
+          future: recipeInstance,
+          builder: (BuildContext context, AsyncSnapshot<Recipe> snapshot) {
+            if (snapshot.hasError) {
+              return Text("Something went wrong");
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            }
+            if (snapshot.hasData) {
+              return snapshot.data;
+            }
+
+            return CircularProgressIndicator();
+          },
+        ),
+      ),
     );
   }
 }

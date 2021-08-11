@@ -42,7 +42,7 @@ class RecipeDA {
   Future<Recipe> getRecipe(String id) {
     CollectionReference recipes = _db.collection("recipes");
 
-    return recipes.doc(id).get().then<Recipe>((value) {
+    return recipes.doc(id).get().then((value) {
       return Recipe(
         id: value.id,
         recipeName: value.data()["recipeName"],
