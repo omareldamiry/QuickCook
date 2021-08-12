@@ -34,6 +34,7 @@ class RecipeDA {
           'recipeName': recipe.recipeName,
           'ingredients': ingredients,
           'recipeOwner': FirebaseAuth.instance.currentUser.email,
+          'rating': recipe.recipeRating,
         })
         .then((value) => print(value))
         .catchError((err) => print("Failed to add recipe: $err"));
@@ -69,6 +70,7 @@ class RecipeDA {
                   id: document.id,
                   recipeName: document.data()['recipeName'],
                   recipeOwner: document.data()['recipeOwner'],
+                  recipeRating: document.data()['rating'],
                 );
               }).toList(),
             );
@@ -102,8 +104,7 @@ class RecipeDA {
                 id: document.id,
                 recipeName: document.data()['recipeName'],
                 recipeOwner: document.data()['recipeOwner'],
-                recipeIngredients:
-                    document.data()['ingredients'],
+                recipeIngredients: document.data()['ingredients'],
                 parentRefresh: refresh,
               );
             }).toList(),
@@ -125,6 +126,7 @@ class RecipeDA {
           'recipeName': recipe.recipeName,
           'recipeOwner': recipe.recipeOwner,
           'ingredients': recipe.recipeIngredients.cast<int>(),
+          'rating': recipe.recipeRating,
         })
         .then((value) => print("${recipe.recipeName} recipe has been edited"))
         .catchError(

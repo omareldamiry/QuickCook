@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/RecipeHandler.dart';
 import 'package:quickcook/db_service.dart';
+import 'package:quickcook/models/Rating.dart';
+import 'package:quickcook/services/RatingDA.dart';
 import 'package:quickcook/utilities/Ingredients.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class RecipeDetailsPage extends StatelessWidget {
   final String id;
@@ -91,6 +94,23 @@ class RecipeDetails extends StatelessWidget {
         Spacer(),
         Spacer(),
         Spacer(),
+        RatingBar.builder(
+          initialRating: _recipe.recipeRating,
+          minRating: 1,
+          direction: Axis.horizontal,
+          allowHalfRating: true,
+          itemCount: 5,
+          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+          itemBuilder: (context, _) => Icon(
+            Icons.star,
+            color: Colors.amber,
+          ),
+          onRatingUpdate: (value) {
+            Rating rating = Rating(recipeID: _recipe.id, ratingValue: value);
+
+            context.read<RatingDA>().addRating(rating);
+          },
+        ),
       ],
     );
   }

@@ -64,7 +64,6 @@ class AddRecipe extends StatelessWidget {
           color: Colors.white,
         ),
         onPressed: () {
-          // TODO: Modify this function to pass a Recipe object
           Recipe newRecipe = Recipe(
             recipeName: recipeName.value.text,
             recipeIngredients: ingredientInput.ingredients,

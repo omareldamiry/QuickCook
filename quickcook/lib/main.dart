@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:quickcook/HomePage.dart';
 import 'package:quickcook/auth_service.dart';
 import 'package:quickcook/db_service.dart';
+import 'package:quickcook/services/RatingDA.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +27,9 @@ class MyApp extends StatelessWidget {
           ),
           Provider<RecipeDA>(
             create: (_) => RecipeDA(FirebaseFirestore.instance),
+          ),
+          Provider<RatingDA>(
+            create: (_) => RatingDA(FirebaseFirestore.instance),
           ),
           StreamProvider(
             create: (context) => context.read<AuthService>().authStateChanges,

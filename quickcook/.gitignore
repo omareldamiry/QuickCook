@@ -9,7 +9,8 @@
 .history
 .svn/
 assets/
-lib/services
+lib/services/db_service.dart
+lib/services/auth_service.dart
 lib/screens/AddRecipeForm.dart
 
 # IntelliJ related
