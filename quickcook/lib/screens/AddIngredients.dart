@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:quickcook/screens/search.dart';
 import 'package:quickcook/utilities/Ingredients.dart';
 
+// ignore: must_be_immutable
 class AddIngredients extends StatelessWidget {
-  List<Ingredients> ingredients;
-  final Function parentRefresh;
+  List<Ingredients>? ingredients;
+  final Function? parentRefresh;
 
   List<IngredientTile> ingredientsView = Ingredients.values
       .map((e) => IngredientTile(
@@ -14,7 +15,7 @@ class AddIngredients extends StatelessWidget {
           ))
       .toList();
 
-  AddIngredients({Key key, this.parentRefresh, this.ingredients})
+  AddIngredients({Key? key, this.parentRefresh, this.ingredients})
       : super(key: key);
 
   @override
@@ -36,7 +37,7 @@ class AddIngredients extends StatelessWidget {
               right: MediaQuery.of(context).size.width * 0.1),
           width: MediaQuery.of(context).size.width * 0.8,
           child: IngredientPicker(
-            parentRefresh: parentRefresh,
+            parentRefresh: parentRefresh!,
             ingredientsView: ingredientsView,
           ),
         ),
@@ -48,7 +49,7 @@ class AddIngredients extends StatelessWidget {
         ),
         onPressed: () {
           List<Ingredients> ingredientsList = ingredientValues();
-          parentRefresh(ingredientsList);
+          parentRefresh!(ingredientsList);
           Navigator.pop(context);
         },
       ),
@@ -67,25 +68,26 @@ class AddIngredients extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class IngredientPicker extends StatefulWidget {
-  final Function parentRefresh;
-  List<IngredientTile> ingredientsView = [];
+  final Function? parentRefresh;
+  List<IngredientTile>? ingredientsView = [];
 
-  IngredientPicker({Key key, this.parentRefresh, this.ingredientsView})
+  IngredientPicker({Key? key, this.parentRefresh, this.ingredientsView})
       : super(key: key);
 
   @override
   _IngredientPickerState createState() => _IngredientPickerState(
-      parentRefresh: parentRefresh, ingredientsView: ingredientsView);
+      parentRefresh: parentRefresh!, ingredientsView: ingredientsView!);
 }
 
 class _IngredientPickerState extends State<IngredientPicker> {
   List<Ingredients> ingredientsList = [];
   List<IngredientTile> picker = [];
   TextEditingController search = TextEditingController();
-  Function parentRefresh;
+  Function? parentRefresh;
 
-  List<IngredientTile> ingredientsView;
+  List<IngredientTile>? ingredientsView;
 
   _IngredientPickerState({this.parentRefresh, this.ingredientsView});
 
@@ -119,7 +121,7 @@ class _IngredientPickerState extends State<IngredientPicker> {
     keyword = keyword.toUpperCase();
 
     if (keyword.isNotEmpty)
-      ingredientsView.forEach((e) {
+      ingredientsView!.forEach((e) {
         if (e.title.contains(keyword)) {
           picker.add(e);
         }
@@ -129,7 +131,7 @@ class _IngredientPickerState extends State<IngredientPicker> {
   void addSelected() {
     picker.forEach((e) {
       if (e.isTrue && !ingredientsList.contains(Ingredients.values[e.index])) {
-        ingredientsView[e.index].newValue(true);
+        ingredientsView![e.index].newValue(true);
         ingredientsList.add(Ingredients.values[e.index]);
       }
     });

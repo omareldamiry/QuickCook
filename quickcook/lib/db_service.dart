@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quickcook/RecipeHandler.dart';
-
-import 'utilities/Ingredients.dart';
+import 'package:quickcook/models/Rating.dart';
+import 'package:quickcook/utilities/Ingredients.dart';
 
 class RecipeDA {
   final FirebaseFirestore _db;
@@ -27,13 +27,13 @@ class RecipeDA {
     CollectionReference recipes = _db.collection("recipes");
 
     List<int> ingredients =
-        recipe.recipeIngredients.map((e) => e.index).toList();
+        recipe.recipeIngredients!.map((e) => e.index).toList();
 
     return recipes
         .add({
           'recipeName': recipe.recipeName,
           'ingredients': ingredients,
-          'recipeOwner': FirebaseAuth.instance.currentUser.email,
+          'recipeOwner': FirebaseAuth.instance.currentUser!.email,
           'rating': recipe.recipeRating,
         })
         .then((value) => print(value))
@@ -49,7 +49,7 @@ class RecipeDA {
   }
 
   // ignore: avoid_init_to_null
-  FutureBuilder<QuerySnapshot> getRecipes({List<int> query = null}) {
+  FutureBuilder<QuerySnapshot> getRecipes({List<int>? query = null}) {
     CollectionReference recipes = _db.collection("recipes");
 
     return FutureBuilder<QuerySnapshot>(
@@ -62,15 +62,15 @@ class RecipeDA {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator();
           }
-          if (snapshot.data.docs.isNotEmpty) {
+          if (snapshot.data!.docs.isNotEmpty) {
             return new ListView(
-              children: snapshot.data.docs.map((DocumentSnapshot document) {
+              children: snapshot.data!.docs.map((DocumentSnapshot document) {
                 return new Recipe(
                   key: Key(document.id),
                   id: document.id,
-                  recipeName: document.data()['recipeName'],
-                  recipeOwner: document.data()['recipeOwner'],
-                  recipeRating: document.data()['rating'],
+                  recipeName: document.data()!['recipeName'],
+                  recipeOwner: document.data()!['recipeOwner'],
+                  // recipeRating: document.data()!['rating'],
                 );
               }).toList(),
             );
@@ -81,7 +81,7 @@ class RecipeDA {
   }
 
   StreamBuilder<QuerySnapshot> getMyRecipes(Function refresh) {
-    String user = FirebaseAuth.instance.currentUser.email;
+    String? user = FirebaseAuth.instance.currentUser!.email;
     Query recipes =
         _db.collection("recipes").where("recipeOwner", isEqualTo: user);
 
@@ -97,14 +97,14 @@ class RecipeDA {
           }
 
           return ListView(
-            children: snapshot.data.docs.map((DocumentSnapshot document) {
-              print(document.data());
+            children: snapshot.data!.docs.map((DocumentSnapshot document) {
               return Recipe(
                 key: Key(document.id),
                 id: document.id,
-                recipeName: document.data()['recipeName'],
-                recipeOwner: document.data()['recipeOwner'],
-                recipeIngredients: document.data()['ingredients'],
+                recipeName: document.data()!['recipeName'],
+                recipeOwner: document.data()!['recipeOwner'],
+                recipeIngredients:
+                    document.data()!['ingredients'].cast<Ingredients>(),
                 parentRefresh: refresh,
               );
             }).toList(),
@@ -112,20 +112,21 @@ class RecipeDA {
         });
   }
 
-  Future<void> editRecipe(Recipe recipe) {
+  Future<void>? editRecipe(Recipe recipe) {
     CollectionReference recipes = _db.collection("recipes");
 
-    if (FirebaseAuth.instance.currentUser.email.compareTo(recipe.recipeOwner) !=
+    if (FirebaseAuth.instance.currentUser!.email!
+            .compareTo(recipe.recipeOwner) !=
         0) {
       return null;
     }
 
     return recipes
         .doc(recipe.id)
-        .set({
+        .update({
           'recipeName': recipe.recipeName,
           'recipeOwner': recipe.recipeOwner,
-          'ingredients': recipe.recipeIngredients.cast<int>(),
+          'ingredients': recipe.recipeIngredients!.cast<int>(),
           'rating': recipe.recipeRating,
         })
         .then((value) => print("${recipe.recipeName} recipe has been edited"))
@@ -143,5 +144,17 @@ class RecipeDA {
         .delete()
         .then((value) => print("Recipe deleted"))
         .catchError((err) => print("Failed to delete recipe: $err"));
+  }
+
+  Future<void> updateRecipeRating(Rating rating) {
+    CollectionReference recipes = _db.collection("recipes");
+
+    dynamic recipe = recipes.doc(rating.recipeID).get().then((value) {
+      double totalRating = value.data()!['rating'] as double;
+    });
+
+    return recipes.doc(rating.recipeID).update({
+      'rating': rating.ratingValue,
+    }).then((value) => null);
   }
 }

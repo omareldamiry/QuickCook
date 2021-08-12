@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quickcook/HomePage.dart';
 import 'package:quickcook/screens/myRecipes.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -20,14 +21,16 @@ class MyDrawer extends StatelessWidget {
           ListTile(
             title: Text("Home"),
             onTap: () {
-              Navigator.pop(context);
+              // Navigator.pop(context);
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (context) => HomePage()));
             },
           ),
           ListTile(
             title: Text("My Recipes"),
             onTap: () {
-              Navigator.pop(context);
-              Navigator.push(context,
+              // Navigator.pop(context);
+              Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => MyRecipesPage()));
             },
           ),

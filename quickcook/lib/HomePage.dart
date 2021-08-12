@@ -6,8 +6,9 @@ import 'package:quickcook/screens/search.dart';
 
 import 'RecipeHandler.dart';
 
+// ignore: must_be_immutable
 class HomePage extends StatelessWidget {
-  List<int> ingredientQuery = [];
+  List<int>? ingredientQuery = [];
 
   HomePage({this.ingredientQuery});
 

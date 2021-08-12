@@ -6,7 +6,7 @@ import 'package:quickcook/db_service.dart';
 class EditRecipe extends StatelessWidget {
   final Recipe recipe;
 
-  EditRecipe({this.recipe});
+  EditRecipe({required this.recipe});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +62,7 @@ class EditRecipe extends StatelessWidget {
         onPressed: () {
           recipe.recipeName = recipeName.value.text;
           RecipeDA(FirebaseFirestore.instance).editRecipe(recipe);
-          recipe.parentRefresh();
+          recipe.parentRefresh!();
           Navigator.of(context).pop();
         },
       ),

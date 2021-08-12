@@ -6,8 +6,9 @@ import 'package:quickcook/screens/EditRecipeForm.dart';
 import 'package:quickcook/screens/RecipeDetails.dart';
 import 'package:quickcook/utilities/Ingredients.dart';
 
+// ignore: must_be_immutable
 class RecipeList extends StatefulWidget {
-  List<int> ingredientsQuery = [];
+  List<int>? ingredientsQuery = null;
 
   RecipeList({this.ingredientsQuery});
 
@@ -16,7 +17,7 @@ class RecipeList extends StatefulWidget {
 }
 
 class _RecipeListState extends State<RecipeList> {
-  List<int> ingredientsQuery;
+  List<int>? ingredientsQuery;
   _RecipeListState(this.ingredientsQuery);
 
   @override
@@ -32,7 +33,7 @@ class _RecipeListState extends State<RecipeList> {
 }
 
 class MyRecipeList extends StatefulWidget {
-  const MyRecipeList({Key key}) : super(key: key);
+  const MyRecipeList({Key? key}) : super(key: key);
 
   @override
   _MyRecipeListState createState() => _MyRecipeListState();
@@ -55,6 +56,7 @@ class _MyRecipeListState extends State<MyRecipeList> {
   }
 }
 
+// ignore: must_be_immutable
 class Recipe extends StatefulWidget {
   String id;
   String recipeName;
@@ -62,26 +64,26 @@ class Recipe extends StatefulWidget {
   int recipePrepTime;
   int recipeCal;
   String recipeVidLink;
-  List<Ingredients> recipeIngredients;
+  List<Ingredients>? recipeIngredients;
   double recipeRating;
   String recipeOwner;
   int cuisine;
   int diet;
   int mealType;
 
-  Function parentRefresh;
+  Function? parentRefresh;
 
   Recipe(
-      {Key key,
-      this.id,
-      this.recipeName,
+      {Key? key,
+      this.id = "",
+      required this.recipeName,
       this.recipeDesc = "Perfectly cooked in a pan",
       this.recipePrepTime = 5,
       this.recipeCal = 20,
       this.recipeVidLink = "https://youtu.be/dummylink",
       this.recipeIngredients,
       this.recipeRating = 0.0,
-      this.recipeOwner,
+      required this.recipeOwner,
       this.cuisine = 1,
       this.diet = 1,
       this.mealType = 0,
@@ -108,8 +110,6 @@ class _RecipeState extends State<Recipe> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    print(recipe.recipeName);
-
     return Container(
       margin: EdgeInsets.only(bottom: 30),
       child: Stack(
@@ -134,7 +134,7 @@ class _RecipeState extends State<Recipe> {
                 color: Colors.white,
               ),
               itemBuilder: (context) {
-                if (FirebaseAuth.instance.currentUser.email
+                if (FirebaseAuth.instance.currentUser!.email!
                         .compareTo(recipe.recipeOwner) !=
                     0) {
                   return <PopupMenuEntry<String>>[
@@ -170,7 +170,7 @@ class _RecipeState extends State<Recipe> {
                   //   recipe.parentRefresh();
                   // });
                   print("${recipe.recipeName} deleted");
-                  recipe.parentRefresh();
+                  recipe.parentRefresh!();
                 }
               },
             ),

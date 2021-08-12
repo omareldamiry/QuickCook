@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           Provider<RatingDA>(
             create: (_) => RatingDA(FirebaseFirestore.instance),
           ),
-          StreamProvider(
+          StreamProvider<User?>(
             create: (context) => context.read<AuthService>().authStateChanges,
             initialData: null,
           ),
@@ -49,10 +49,12 @@ class MyApp extends StatelessWidget {
 class AuthWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final firebaseUser = context.watch<User>();
+    final User? firebaseUser = context.watch<User?>();
 
     if (firebaseUser != null) {
-      return HomePage();
+      return HomePage(
+        ingredientQuery: [],
+      );
     }
 
     return LoginPage();

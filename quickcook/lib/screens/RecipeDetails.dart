@@ -40,14 +40,14 @@ class RecipeDetailsPage extends StatelessWidget {
             }
             if (snapshot.hasData) {
               Recipe recipe = Recipe(
-                id: snapshot.data.id,
-                recipeName: snapshot.data.data()["recipeName"],
-                recipeIngredients: snapshot.data
-                    .data()["ingredients"]
+                id: snapshot.data!.id,
+                recipeName: snapshot.data!.data()!["recipeName"],
+                recipeIngredients: snapshot.data!
+                    .data()!["ingredients"]
                     .map((element) => Ingredients.values[element])
                     .toList()
                     .cast<Ingredients>(),
-                recipeOwner: snapshot.data.data()["recipeOwner"],
+                recipeOwner: snapshot.data!.data()!["recipeOwner"],
               );
 
               return RecipeDetails(recipe);
@@ -117,7 +117,7 @@ class RecipeDetails extends StatelessWidget {
 
   List<Text> _ingredientDetails() {
     List<Text> ingredients = [];
-    _recipe.recipeIngredients.forEach((element) {
+    _recipe.recipeIngredients!.forEach((element) {
       ingredients
           .add(Text(element.toString().substring(12).replaceAll('_', ' ')));
     });

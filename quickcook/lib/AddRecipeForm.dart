@@ -10,7 +10,9 @@ import 'RecipeHandler.dart';
 class AddRecipe extends StatelessWidget {
   final TextEditingController recipeName = TextEditingController();
   final List<Ingredients> ingredientsList = [];
-  final IngredientInput ingredientInput = IngredientInput();
+  final IngredientInput ingredientInput = IngredientInput(
+    ingredients: [],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +68,7 @@ class AddRecipe extends StatelessWidget {
         onPressed: () {
           Recipe newRecipe = Recipe(
             recipeName: recipeName.value.text,
-            recipeIngredients: ingredientInput.ingredients,
+            recipeIngredients: ingredientInput.ingredients, recipeOwner: '',
           );
           RecipeDA(FirebaseFirestore.instance).addRecipe(newRecipe);
           Navigator.pushReplacement(context,
@@ -77,10 +79,11 @@ class AddRecipe extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class IngredientInput extends StatefulWidget {
   List<Ingredients> ingredients = [];
 
-  IngredientInput({Key key, this.ingredients}) : super(key: key);
+  IngredientInput({Key? key, required this.ingredients}) : super(key: key);
 
   void newIngredients(List<Ingredients> _ingredients) {
     ingredients = _ingredients;
@@ -92,10 +95,10 @@ class IngredientInput extends StatefulWidget {
 }
 
 class _IngredientInputState extends State<IngredientInput> {
-  List<Ingredients> ingredients;
+  late List<Ingredients> ingredients;
   int ingredientCount = 0;
 
-  _IngredientInputState({List<Ingredients> ingredients});
+  _IngredientInputState({required List<Ingredients> ingredients});
 
   @override
   Widget build(BuildContext context) {
