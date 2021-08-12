@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quickcook/RecipeHandler.dart';
 import 'package:quickcook/models/Rating.dart';
@@ -65,9 +64,6 @@ class RecipeDA {
           if (snapshot.data!.docs.isNotEmpty) {
             return new ListView(
               children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                print(document.data()!['recipeName'] +
-                    " " +
-                    document.data()!['rating'].toString());
                 return new Recipe(
                   key: Key(document.id),
                   id: document.id,
@@ -137,25 +133,47 @@ class RecipeDA {
 
   Future<void> deleteRecipe(String id) {
     CollectionReference recipes = _db.collection("recipes");
+    CollectionReference ratings = _db.collection("ratings");
 
-    print(recipes.doc(id).id);
+    return recipes.doc(id).delete().then((value) {
+      return ratings.where('recipeID', isEqualTo: id).get().then((value) {
+        List<DocumentReference> references = [];
+        value.docs.forEach((document) {
+          references.add(document.reference);
+        });
 
-    return recipes
-        .doc(id)
-        .delete()
-        .then((value) => print("Recipe deleted"))
-        .catchError((err) => print("Failed to delete recipe: $err"));
+        return references.forEach((reference) {
+          reference.delete().then((value) => null).catchError((err) => null);
+        });
+      });
+    }).catchError((err) => print("Failed to delete recipe: $err"));
   }
 
   Future<void> updateRecipeRating(Rating rating) {
     CollectionReference recipes = _db.collection("recipes");
+    CollectionReference ratings = _db.collection("ratings");
 
-    dynamic recipe = recipes.doc(rating.recipeID).get().then((value) {
-      double totalRating = value.data()!['rating'] as double;
+    return recipes.doc(rating.recipeID).get().then((value) {
+      double totalRating = 0.0;
+      List<double> allRatings = [];
+
+      return ratings.where('recipeID', isEqualTo: value.id).get().then((value) {
+        value.docs.forEach((document) {
+          allRatings.add(document.data()['ratingValue'].toDouble());
+        });
+
+        allRatings.forEach((value) {
+          totalRating += value;
+        });
+
+        totalRating = (totalRating / allRatings.length) * 10;
+        totalRating = totalRating.roundToDouble();
+        totalRating /= 10;
+
+        return recipes.doc(rating.recipeID).update({
+          'rating': totalRating,
+        }).then((value) => print('Rating updated'));
+      });
     });
-
-    return recipes.doc(rating.recipeID).update({
-      'rating': rating.ratingValue,
-    }).then((value) => print('Rating updated'));
   }
 }

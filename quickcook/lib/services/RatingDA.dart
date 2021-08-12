@@ -24,7 +24,7 @@ class RatingDA {
               'ratingValue': rating.ratingValue,
             })
             .then((value) => RecipeDA(_db).updateRecipeRating(rating))
-            .catchError((err) => null);
+            .catchError((err) => print(err));
       }
 
       return updateRating(value.docs.first.id, rating);
