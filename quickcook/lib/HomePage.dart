@@ -8,7 +8,7 @@ import 'RecipeHandler.dart';
 
 // ignore: must_be_immutable
 class HomePage extends StatelessWidget {
-  List<int>? ingredientQuery = [];
+  List<int>? ingredientQuery = null;
 
   HomePage({this.ingredientQuery});
 

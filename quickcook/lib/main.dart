@@ -53,7 +53,7 @@ class AuthWrapper extends StatelessWidget {
 
     if (firebaseUser != null) {
       return HomePage(
-        ingredientQuery: [],
+        ingredientQuery: null,
       );
     }
 

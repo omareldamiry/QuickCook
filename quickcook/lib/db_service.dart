@@ -65,12 +65,15 @@ class RecipeDA {
           if (snapshot.data!.docs.isNotEmpty) {
             return new ListView(
               children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                print(document.data()!['recipeName'] +
+                    " " +
+                    document.data()!['rating'].toString());
                 return new Recipe(
                   key: Key(document.id),
                   id: document.id,
                   recipeName: document.data()!['recipeName'],
                   recipeOwner: document.data()!['recipeOwner'],
-                  // recipeRating: document.data()!['rating'],
+                  recipeRating: document.data()!['rating'].toDouble(),
                 );
               }).toList(),
             );
@@ -125,9 +128,7 @@ class RecipeDA {
         .doc(recipe.id)
         .update({
           'recipeName': recipe.recipeName,
-          'recipeOwner': recipe.recipeOwner,
           'ingredients': recipe.recipeIngredients!.cast<int>(),
-          'rating': recipe.recipeRating,
         })
         .then((value) => print("${recipe.recipeName} recipe has been edited"))
         .catchError(
@@ -155,6 +156,6 @@ class RecipeDA {
 
     return recipes.doc(rating.recipeID).update({
       'rating': rating.ratingValue,
-    }).then((value) => null);
+    }).then((value) => print('Rating updated'));
   }
 }

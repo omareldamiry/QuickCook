@@ -41,13 +41,14 @@ class RecipeDetailsPage extends StatelessWidget {
             if (snapshot.hasData) {
               Recipe recipe = Recipe(
                 id: snapshot.data!.id,
-                recipeName: snapshot.data!.data()!["recipeName"],
+                recipeName: snapshot.data!.data()!['recipeName'],
                 recipeIngredients: snapshot.data!
-                    .data()!["ingredients"]
+                    .data()!['ingredients']
                     .map((element) => Ingredients.values[element])
                     .toList()
                     .cast<Ingredients>(),
-                recipeOwner: snapshot.data!.data()!["recipeOwner"],
+                recipeOwner: snapshot.data!.data()!['recipeOwner'],
+                recipeRating: snapshot.data!.data()!["rating"].toDouble(),
               );
 
               return RecipeDetails(recipe);
@@ -96,9 +97,9 @@ class RecipeDetails extends StatelessWidget {
         Spacer(),
         RatingBar.builder(
           initialRating: _recipe.recipeRating,
+          allowHalfRating: true,
           minRating: 1,
           direction: Axis.horizontal,
-          allowHalfRating: true,
           itemCount: 5,
           itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
           itemBuilder: (context, _) => Icon(

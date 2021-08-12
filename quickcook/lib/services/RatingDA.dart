@@ -23,7 +23,7 @@ class RatingDA {
               'userID': FirebaseAuth.instance.currentUser!.email,
               'ratingValue': rating.ratingValue,
             })
-            .then((value) => null)
+            .then((value) => RecipeDA(_db).updateRecipeRating(rating))
             .catchError((err) => null);
       }
 
