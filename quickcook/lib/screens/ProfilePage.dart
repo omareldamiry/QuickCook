@@ -12,7 +12,7 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       appBar: myAppBar(title: "Profile"),
       drawer: MyDrawer(),
-      
+      body: Container(),
     );
   }
 }

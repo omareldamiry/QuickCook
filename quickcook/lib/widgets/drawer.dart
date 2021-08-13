@@ -51,6 +51,7 @@ class MyDrawer extends StatelessWidget {
               UserData currentUser = await context
                   .read<UserDA>()
                   .getUser(FirebaseAuth.instance.currentUser!.email!);
+                  
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => ProfilePage(user: currentUser)));
             },
