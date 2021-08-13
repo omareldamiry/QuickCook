@@ -1,6 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:quickcook/HomePage.dart';
+import 'package:quickcook/models/User.dart';
+import 'package:quickcook/screens/ProfilePage.dart';
 import 'package:quickcook/screens/myRecipes.dart';
+import 'package:quickcook/services/UserDA.dart';
 
 class MyDrawer extends StatelessWidget {
   @override
@@ -38,6 +43,16 @@ class MyDrawer extends StatelessWidget {
             title: Text("Favorites"),
             onTap: () {
               Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text("Profile"),
+            onTap: () async {
+              UserData currentUser = await context
+                  .read<UserDA>()
+                  .getUser(FirebaseAuth.instance.currentUser!.email!);
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => ProfilePage(user: currentUser)));
             },
           ),
         ],

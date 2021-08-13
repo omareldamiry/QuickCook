@@ -8,6 +8,7 @@ import 'package:quickcook/utilities/Ingredients.dart';
 
 // ignore: must_be_immutable
 class RecipeList extends StatefulWidget {
+  // ignore: avoid_init_to_null
   List<int>? ingredientsQuery = null;
 
   RecipeList({this.ingredientsQuery});

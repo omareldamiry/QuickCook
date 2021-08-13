@@ -4,6 +4,7 @@ import 'package:quickcook/db_service.dart';
 import 'package:quickcook/screens/AddIngredients.dart';
 import 'package:quickcook/screens/myRecipes.dart';
 import 'package:quickcook/utilities/Ingredients.dart';
+import 'package:quickcook/widgets/appbar.dart';
 
 import 'RecipeHandler.dart';
 
@@ -17,13 +18,7 @@ class AddRecipe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          "Add New Recipe",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+      appBar: myAppBar(title: "Add New Recipe"),
       body: Container(
         margin: EdgeInsets.only(top: 10),
         alignment: Alignment.center,

@@ -7,6 +7,7 @@ import 'package:quickcook/models/Rating.dart';
 import 'package:quickcook/services/RatingDA.dart';
 import 'package:quickcook/utilities/Ingredients.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:quickcook/widgets/appbar.dart';
 
 class RecipeDetailsPage extends StatelessWidget {
   final String id;
@@ -18,19 +19,13 @@ class RecipeDetailsPage extends StatelessWidget {
     Future<DocumentSnapshot> recipeInstance =
         context.read<RecipeDA>().getRecipe(id);
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          "Details",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+      appBar: myAppBar(title: "Details"),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
         child: FutureBuilder(
           future: recipeInstance,
-          builder:
-              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          builder: (BuildContext context,
+              AsyncSnapshot<DocumentSnapshot<dynamic>> snapshot) {
             if (snapshot.hasError) {
               return Text("Something went wrong");
             }
@@ -95,22 +90,25 @@ class RecipeDetails extends StatelessWidget {
         Spacer(),
         Spacer(),
         Spacer(),
-        RatingBar.builder(
-          initialRating: _recipe.recipeRating,
-          allowHalfRating: true,
-          minRating: 1,
-          direction: Axis.horizontal,
-          itemCount: 5,
-          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-          itemBuilder: (context, _) => Icon(
-            Icons.star,
-            color: Colors.amber,
-          ),
-          onRatingUpdate: (value) {
-            Rating rating = Rating(recipeID: _recipe.id, ratingValue: value);
+        Container(
+          alignment: Alignment.center,
+          child: RatingBar.builder(
+            initialRating: _recipe.recipeRating,
+            allowHalfRating: true,
+            minRating: 1,
+            direction: Axis.horizontal,
+            itemCount: 5,
+            itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+            itemBuilder: (context, _) => Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
+            onRatingUpdate: (value) {
+              Rating rating = Rating(recipeID: _recipe.id, ratingValue: value);
 
-            context.read<RatingDA>().addRating(rating);
-          },
+              context.read<RatingDA>().addRating(rating);
+            },
+          ),
         ),
       ],
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quickcook/screens/search.dart';
 import 'package:quickcook/utilities/Ingredients.dart';
+import 'package:quickcook/widgets/appbar.dart';
 
 // ignore: must_be_immutable
 class AddIngredients extends StatelessWidget {
@@ -21,13 +22,7 @@ class AddIngredients extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          "Add Ingredients",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+      appBar: myAppBar(title: "Add Ingredients"),
       body: SingleChildScrollView(
         controller: ScrollController(),
         child: Container(

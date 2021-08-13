@@ -10,7 +10,7 @@
 .svn/
 assets/
 lib/models/Recipe.dart
-lib/services/db_service.dart
+lib/services/RecipeDA.dart
 lib/services/auth_service.dart
 lib/screens/AddRecipeForm.dart
 

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:quickcook/RecipeHandler.dart';
 import 'package:quickcook/db_service.dart';
+import 'package:quickcook/widgets/appbar.dart';
 
 class EditRecipe extends StatelessWidget {
   final Recipe recipe;
@@ -14,13 +15,7 @@ class EditRecipe extends StatelessWidget {
         TextEditingController(text: recipe.recipeName);
 
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          "Edit Recipe",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+      appBar: myAppBar(title: "Edit Recipe"),
       body: Container(
         margin: EdgeInsets.only(top: 10),
         alignment: Alignment.center,

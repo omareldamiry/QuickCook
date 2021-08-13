@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quickcook/HomePage.dart';
 import 'package:quickcook/utilities/Ingredients.dart';
+import 'package:quickcook/widgets/appbar.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -18,13 +19,7 @@ class _SearchPage extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          "Recipe search",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+      appBar: myAppBar(title: "Recipe search"),
       body: Container(
         child: ListView(
           children: ingredients,
@@ -52,6 +47,7 @@ class _SearchPage extends State<SearchPage> {
     List<int>? query = [];
 
     ingredients.forEach((element) {
+      // ignore: unnecessary_statements
       element.isTrue ? query!.add(element.index) : null;
     });
 

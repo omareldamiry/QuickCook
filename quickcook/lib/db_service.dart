@@ -63,7 +63,7 @@ class RecipeDA {
           }
           if (snapshot.data!.docs.isNotEmpty) {
             return new ListView(
-              children: snapshot.data!.docs.map((DocumentSnapshot document) {
+              children: snapshot.data!.docs.map((DocumentSnapshot<dynamic> document) {
                 return new Recipe(
                   key: Key(document.id),
                   id: document.id,
@@ -96,7 +96,7 @@ class RecipeDA {
           }
 
           return ListView(
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
+            children: snapshot.data!.docs.map((DocumentSnapshot<dynamic> document) {
               return Recipe(
                 key: Key(document.id),
                 id: document.id,
@@ -158,7 +158,7 @@ class RecipeDA {
       List<double> allRatings = [];
 
       return ratings.where('recipeID', isEqualTo: value.id).get().then((value) {
-        value.docs.forEach((document) {
+        value.docs.forEach((QueryDocumentSnapshot<dynamic> document) {
           allRatings.add(document.data()['ratingValue'].toDouble());
         });
 

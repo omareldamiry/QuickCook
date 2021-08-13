@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quickcook/AddRecipeForm.dart';
 import 'package:quickcook/RecipeHandler.dart';
+import 'package:quickcook/widgets/appbar.dart';
 import 'package:quickcook/widgets/drawer.dart';
 
 class MyRecipesPage extends StatefulWidget {
@@ -12,13 +13,7 @@ class _MyRecipesPage extends State<MyRecipesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          "My Recipes",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+      appBar: myAppBar(title: "My Recipes"),
       drawer: MyDrawer(),
       body: Container(
         alignment: Alignment.center,
