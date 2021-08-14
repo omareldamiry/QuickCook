@@ -12,7 +12,17 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       appBar: myAppBar(title: "Profile"),
       drawer: MyDrawer(),
-      body: Container(),
+      body: Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Text(
+          "${user.firstName} ${user.lastName}",
+          style: TextStyle(
+            fontSize: 27,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
 }

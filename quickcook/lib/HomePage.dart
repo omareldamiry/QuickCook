@@ -30,7 +30,7 @@ class HomePage extends StatelessWidget {
         ],
       ),
       drawer: MyDrawer(),
-      body: Center(child: RecipeList(ingredientsQuery: ingredientQuery)),
+      body: RecipeList(ingredientsQuery: ingredientQuery),
       floatingActionButton: FloatingActionButton(
           child: Icon(
             Icons.search,

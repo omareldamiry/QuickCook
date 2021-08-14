@@ -22,8 +22,12 @@ class UserData {
           email: json['email']! as String,
           firstName: json['firstName']! as String,
           lastName: json['lastName']! as String,
-          profilePic: json['profilePic']! as String,
-          favorites: json['favorites']!.cast<String>(),
+          profilePic: json['profilePic'] != null
+              ? json['profilePic'] as String
+              : json['profilePic'],
+          favorites: json['favorites'] != null
+              ? json['favorites'].cast<String>()
+              : json['favorites'],
         );
 
   Map<String, Object?> toJson() {

@@ -23,11 +23,7 @@ class _RecipeListState extends State<RecipeList> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-
     return Container(
-      width: screenWidth * 0.8,
-      margin: EdgeInsets.only(top: 20),
       child: context.read<RecipeDA>().getRecipes(query: ingredientsQuery),
     );
   }
@@ -43,11 +39,7 @@ class MyRecipeList extends StatefulWidget {
 class _MyRecipeListState extends State<MyRecipeList> {
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-
     return Container(
-      width: screenWidth * 0.8,
-      margin: EdgeInsets.only(top: 20),
       child: context.read<RecipeDA>().getMyRecipes(refresh),
     );
   }
@@ -65,6 +57,7 @@ class Recipe extends StatefulWidget {
   int recipePrepTime;
   int recipeCal;
   String recipeVidLink;
+  String recipePicLink;
   List<Ingredients>? recipeIngredients;
   double recipeRating;
   String recipeOwner;
@@ -82,6 +75,7 @@ class Recipe extends StatefulWidget {
       this.recipePrepTime = 5,
       this.recipeCal = 20,
       this.recipeVidLink = "https://youtu.be/dummylink",
+      this.recipePicLink = "https://inter.net/dummylink",
       this.recipeIngredients,
       this.recipeRating = 0.0,
       required this.recipeOwner,
@@ -112,99 +106,113 @@ class _RecipeState extends State<Recipe> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      margin: EdgeInsets.only(bottom: 30),
+      margin: EdgeInsets.only(bottom: 40),
+      alignment: Alignment.center,
       child: Stack(
+        alignment: Alignment.topRight,
         clipBehavior: Clip.none,
         children: [
-          Container(
-            width: screenWidth * 0.8,
-            height: 200,
-            alignment: Alignment.topRight,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              color: Colors.orange[200],
-              // image: DecorationImage(
-              //   alignment: FractionalOffset.center,
-              //   fit: BoxFit.fitWidth,
-              //   image: new AssetImage("assets/img/pancake.jpg"), //? Placeholder
-              // ),
-            ),
-            child: PopupMenuButton(
-              icon: Icon(
-                Icons.more_vert_rounded,
-                color: Colors.white,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RecipeDetailsPage(context, recipe.id),
+                ),
+              );
+            },
+            child: Container(
+              height: 200,
+              width: screenWidth * 0.8,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: Colors.orange[200],
+                image: DecorationImage(
+                  alignment: FractionalOffset.center,
+                  fit: BoxFit.fitWidth,
+                  image: ResizeImage(
+                    NetworkImage(
+                      "https://cdn.vox-cdn.com/thumbor/ebLyPNyZghyiG1TCxQJ5vI-qxvU=/0x0:1280x853/1200x900/filters:focal(538x325:742x529)/cdn.vox-cdn.com/uploads/chorus_image/image/69482129/Aerial_Image__1_.0.jpg",
+                    ),
+                    height: 200,
+                  ), //? Placeholder
+                ),
               ),
-              itemBuilder: (context) {
-                if (FirebaseAuth.instance.currentUser!.email!
-                        .compareTo(recipe.recipeOwner) !=
-                    0) {
-                  return <PopupMenuEntry<String>>[
-                    const PopupMenuItem(
-                      child: Text("Add to favourites"),
-                    ),
-                  ];
-                }
-                return <PopupMenuEntry<String>>[
-                  const PopupMenuItem(
-                    value: "Edit",
-                    child: Text("Edit"),
-                  ),
-                  const PopupMenuItem(
-                    value: "Delete",
-                    child: Text(
-                      "Delete",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-                ];
-              },
-              onSelected: (String value) {
-                if (value.compareTo("Edit") == 0) {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => EditRecipe(
-                            recipe: recipe,
-                          )));
-                } else if (value.compareTo("Delete") == 0) {
-                  context.read<RecipeDA>().deleteRecipe(recipe.id);
-                  // setState(() {
-                  //   print("${recipe.recipeName} ${recipe.id} deleted");
-                  //   recipe.parentRefresh();
-                  // });
-                  print("${recipe.recipeName} deleted");
-                  recipe.parentRefresh!();
-                }
-              },
             ),
           ),
-          Positioned(
-            bottom: -10,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
+          PopupMenuButton(
+            icon: Container(
+              alignment: Alignment.center,
+              width: 150,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+              ),
+              child: Icon(
+                Icons.more_vert_rounded,
+                color: Colors.black,
+              ),
+            ),
+            itemBuilder: (context) {
+              if (FirebaseAuth.instance.currentUser!.email!
+                      .compareTo(recipe.recipeOwner) !=
+                  0) {
+                return <PopupMenuEntry<String>>[
+                  const PopupMenuItem(
+                    child: Text("Add to favourites"),
+                    value: "Favourite",
+                  ),
+                ];
+              }
+              return <PopupMenuEntry<String>>[
+                const PopupMenuItem(
+                  value: "Edit",
+                  child: Text("Edit"),
+                ),
+                const PopupMenuItem(
+                  value: "Delete",
+                  child: Text(
+                    "Delete",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ];
+            },
+            onSelected: (String value) {
+              if (value.compareTo("Edit") == 0) {
+                Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => RecipeDetailsPage(context, recipe.id),
+                    builder: (context) => EditRecipe(
+                      recipe: recipe,
+                    ),
                   ),
                 );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.8),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                      )
-                    ]),
-                width: screenWidth * 0.8,
-                padding: EdgeInsets.all(10),
-                child: Text(
-                  "${recipe.recipeName}", //? Placeholder
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
+              } else if (value.compareTo("Delete") == 0) {
+                context.read<RecipeDA>().deleteRecipe(recipe.id);
+                print("${recipe.recipeName} deleted");
+                recipe.parentRefresh!();
+              } else if (value.compareTo("Favourite") == 0) {}
+            },
+          ),
+          Positioned(
+            bottom: -20,
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.8),
+                      spreadRadius: 1,
+                      blurRadius: 3,
+                    )
+                  ]),
+              width: screenWidth * 0.8,
+              padding: EdgeInsets.all(10),
+              child: Text(
+                "${recipe.recipeName}", //? Placeholder
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
           ),

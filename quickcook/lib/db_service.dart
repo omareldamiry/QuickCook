@@ -10,18 +10,6 @@ class RecipeDA {
 
   RecipeDA(this._db);
 
-  // Future<void> addRecipe(recipeName) {
-  //   CollectionReference recipes = _db.collection("recipes");
-
-  //   return recipes
-  //       .add({
-  //         'recipeName': recipeName,
-  //         'recipeOwner': FirebaseAuth.instance.currentUser.email,
-  //       })
-  //       .then((value) => print(value))
-  //       .catchError((err) => print("Failed to add recipe: $err"));
-  // }
-
   Future<void> addRecipe(Recipe recipe) {
     CollectionReference recipes = _db.collection("recipes");
 
@@ -59,11 +47,21 @@ class RecipeDA {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return Container(
+              alignment: Alignment.center,
+              width: double.minPositive,
+              child: CircularProgressIndicator(),
+            );
           }
           if (snapshot.data!.docs.isNotEmpty) {
             return new ListView(
-              children: snapshot.data!.docs.map((DocumentSnapshot<dynamic> document) {
+              clipBehavior: Clip.none,
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.1,
+                vertical: MediaQuery.of(context).size.width * 0.05,
+              ),
+              children:
+                  snapshot.data!.docs.map((DocumentSnapshot<dynamic> document) {
                 return new Recipe(
                   key: Key(document.id),
                   id: document.id,
@@ -96,7 +94,13 @@ class RecipeDA {
           }
 
           return ListView(
-            children: snapshot.data!.docs.map((DocumentSnapshot<dynamic> document) {
+            clipBehavior: Clip.none,
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.1,
+                vertical: MediaQuery.of(context).size.width * 0.05,
+              ),
+            children:
+                snapshot.data!.docs.map((DocumentSnapshot<dynamic> document) {
               return Recipe(
                 key: Key(document.id),
                 id: document.id,
