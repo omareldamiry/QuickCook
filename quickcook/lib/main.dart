@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:provider/provider.dart';
 import 'package:quickcook/screens/HomePage.dart';
+import 'package:quickcook/services/FavoriteDA.dart';
 import 'package:quickcook/services/auth_service.dart';
 import 'package:quickcook/screens/LoginPage.dart';
 import 'package:quickcook/services/RatingDA.dart';
@@ -31,6 +32,9 @@ class MyApp extends StatelessWidget {
         ),
         Provider<RecipeDA>(
           create: (_) => RecipeDA(),
+        ),
+        Provider<FavoriteDA>(
+          create: (_) => FavoriteDA(),
         ),
         Provider<RatingDA>(
           create: (_) => RatingDA(),

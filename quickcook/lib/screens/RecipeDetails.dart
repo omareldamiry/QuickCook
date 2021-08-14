@@ -20,7 +20,7 @@ class RecipeDetailsPage extends StatelessWidget {
       appBar: myAppBar(title: "Details"),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
-        child: FutureBuilder(
+        child: FutureBuilder<Recipe>(
           future: recipeInstance,
           builder: (BuildContext context, AsyncSnapshot<Recipe> snapshot) {
             if (snapshot.hasError) {
@@ -28,7 +28,7 @@ class RecipeDetailsPage extends StatelessWidget {
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
+              return Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasData) {
               Recipe recipe = snapshot.data!;
@@ -36,7 +36,7 @@ class RecipeDetailsPage extends StatelessWidget {
               return RecipeDetails(recipe);
             }
 
-            return CircularProgressIndicator();
+            return Center(child: Text("Something went wrong"));
           },
         ),
       ),
@@ -80,6 +80,7 @@ class RecipeDetails extends StatelessWidget {
         Container(
           alignment: Alignment.center,
           child: RatingBar.builder(
+            itemSize: 30,
             initialRating: _recipe.recipeRating,
             allowHalfRating: true,
             minRating: 1,

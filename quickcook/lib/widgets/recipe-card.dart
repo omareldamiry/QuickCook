@@ -1,17 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quickcook/models/Recipe.dart';
+import 'package:quickcook/models/User.dart';
+import 'package:quickcook/models/favorite.dart';
 import 'package:quickcook/screens/EditRecipeForm.dart';
 import 'package:quickcook/screens/RecipeDetails.dart';
+import 'package:quickcook/services/FavoriteDA.dart';
 import 'package:quickcook/services/RecipeDA.dart';
 import 'package:provider/provider.dart';
+import 'package:quickcook/services/UserDA.dart';
 
 class RecipeCard extends StatefulWidget {
   final Recipe recipe;
+  bool isFavorite;
 
   final Function? parentRefresh;
 
-  RecipeCard({Key? key, required this.recipe, this.parentRefresh});
+  RecipeCard({
+    Key? key,
+    required this.recipe,
+    this.parentRefresh,
+    this.isFavorite = false,
+  });
 
   @override
   _RecipeCardState createState() => _RecipeCardState(recipe, parentRefresh);
@@ -79,12 +89,19 @@ class _RecipeCardState extends State<RecipeCard> {
               if (FirebaseAuth.instance.currentUser!.email!
                       .compareTo(recipe.recipeOwner) !=
                   0) {
-                return <PopupMenuEntry<String>>[
-                  const PopupMenuItem(
-                    child: Text("Add to favourites"),
-                    value: "Favourite",
-                  ),
-                ];
+                return !super.widget.isFavorite
+                    ? <PopupMenuEntry<String>>[
+                        const PopupMenuItem(
+                          child: Text("Add to favorites"),
+                          value: "Favorite",
+                        ),
+                      ]
+                    : <PopupMenuEntry<String>>[
+                        const PopupMenuItem(
+                          child: Text("Remove from favorites"),
+                          value: "Unfavorite",
+                        ),
+                      ];
               }
               return <PopupMenuEntry<String>>[
                 const PopupMenuItem(
@@ -100,7 +117,7 @@ class _RecipeCardState extends State<RecipeCard> {
                 ),
               ];
             },
-            onSelected: (String value) {
+            onSelected: (String value) async {
               if (value.compareTo("Edit") == 0) {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -111,10 +128,35 @@ class _RecipeCardState extends State<RecipeCard> {
                   ),
                 );
               } else if (value.compareTo("Delete") == 0) {
-                context.read<RecipeDA>().deleteRecipe(recipe.id);
+                await context.read<RecipeDA>().deleteRecipe(recipe.id);
                 print("${recipe.recipeName} deleted");
                 parentRefresh!();
-              } else if (value.compareTo("Favourite") == 0) {}
+              } else if (value.compareTo("Favorite") == 0) {
+                UserData user = await context
+                    .read<UserDA>()
+                    .getUser(FirebaseAuth.instance.currentUser!.email!);
+                Favorite favorite =
+                    Favorite(userID: user.id, recipeID: recipe.id);
+                await context.read<FavoriteDA>().addToFavorites(favorite);
+                setState(() {
+                  super.widget.isFavorite = true;
+                });
+              } else if (value.compareTo("Unfavorite") == 0) {
+                UserData user = await context
+                    .read<UserDA>()
+                    .getUser(FirebaseAuth.instance.currentUser!.email!);
+
+                Favorite favorite = await context
+                    .read<FavoriteDA>()
+                    .getFavorite(user.id, recipe.id);
+
+                await context.read<FavoriteDA>().deleteFavorite(favorite.id);
+
+                setState(() {
+                  parentRefresh!(favorite);
+                  super.widget.isFavorite = false;
+                });
+              }
             },
           ),
           Positioned(

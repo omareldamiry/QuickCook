@@ -5,7 +5,6 @@ class UserData {
   final String firstName;
   final String lastName;
   final String? profilePic;
-  final List<String>? favorites;
 
   UserData({
     this.id = "",
@@ -13,7 +12,6 @@ class UserData {
     required this.firstName,
     required this.lastName,
     this.profilePic,
-    this.favorites,
   });
 
   UserData.fromJson(String jsonID, Map<String, dynamic> json)
@@ -25,9 +23,6 @@ class UserData {
           profilePic: json['profilePic'] != null
               ? json['profilePic'] as String
               : json['profilePic'],
-          favorites: json['favorites'] != null
-              ? json['favorites'].cast<String>()
-              : json['favorites'],
         );
 
   Map<String, Object?> toJson() {
@@ -36,7 +31,6 @@ class UserData {
       'firstName': firstName,
       'lastName': lastName,
       'profilePic': profilePic,
-      'favorites': favorites,
     };
   }
 }

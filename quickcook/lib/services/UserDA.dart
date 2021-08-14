@@ -27,4 +27,11 @@ class UserDA {
   Future<void> updateUserProfile(UserData userData) async {
     await usersRef.doc(userData.id).update(userData.toJson());
   }
+
+  Future<void> addToFavorites(String email, String recipeID) async {
+    // await usersRef
+    //     .where('email', isEqualTo: email)
+    //     .get()
+    //     .then((snapshot) => snapshot.docs.first.reference.update(data));
+  }
 }

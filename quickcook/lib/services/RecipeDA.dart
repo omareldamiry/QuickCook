@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quickcook/models/Rating.dart';
 import 'package:quickcook/models/Recipe.dart';
+import 'package:quickcook/models/User.dart';
+import 'package:quickcook/models/favorite.dart';
 
 //  RecipeDA
 // *(aka. db_service 2.0)*
@@ -20,6 +22,20 @@ class RecipeDA {
             fromFirestore: (snapshot, _) =>
                 Rating.fromJson(snapshot.id, snapshot.data()!),
             toFirestore: (rating, _) => rating.toJson(),
+          );
+
+  final favoritesRef = FirebaseFirestore.instance
+      .collection('favorites')
+      .withConverter(
+          fromFirestore: (snapshot, _) =>
+              Favorite.fromJson(snapshot.id, snapshot.data()!),
+          toFirestore: (favorite, _) => favorite.toJson());
+
+  final usersRef =
+      FirebaseFirestore.instance.collection('users').withConverter<UserData>(
+            fromFirestore: (snapshot, _) =>
+                UserData.fromJson(snapshot.id, snapshot.data()!),
+            toFirestore: (userData, _) => userData.toJson(),
           );
 
   Future<void> addRecipe(Recipe recipe) async {
@@ -49,21 +65,23 @@ class RecipeDA {
     return recipesQuerySnapshot;
   }
 
-  Future<QuerySnapshot<Recipe>> getFavourites(
+  Future<List<Recipe>> getFavourites(
       // ignore: avoid_init_to_null
-      {List<String>? query = null}) async {
-    QuerySnapshot<Recipe> recipesQuerySnapshot = await recipesRef
-        .where(
-          'ingredients',
-          arrayContainsAny: query,
-        )
+      {List<String>? favoritesIDs = null}) async {
+    List<Recipe> favorites = [];
+
+    await recipesRef
         .get()
-        .then((querySnapshot) => querySnapshot)
+        .then((querySnapshot) => querySnapshot.docs.forEach((snapshot) {
+              if (favoritesIDs!.contains(snapshot.id)) {
+                favorites.add(snapshot.data());
+              }
+            }))
         .catchError((err) {
       print(err);
     });
 
-    return recipesQuerySnapshot;
+    return favorites;
   }
 
   Stream<QuerySnapshot<Recipe>> getMyRecipes() {
@@ -134,5 +152,35 @@ class RecipeDA {
         }).then((value) => print('Rating updated'));
       });
     });
+  }
+
+  Future<bool> isFavorite(String recipeID, String userID) async {
+    bool isInFavorites = await favoritesRef
+        .where('userID', isEqualTo: userID)
+        .where('recipeID', isEqualTo: recipeID)
+        .get()
+        .then((snapshot) => snapshot.docs.isNotEmpty);
+
+    return isInFavorites;
+  }
+
+  Future<List<bool>> listIsFavorite(List<Recipe> recipes) async {
+    List<bool> x = [];
+    UserData user = await usersRef
+        .where('email', isEqualTo: FirebaseAuth.instance.currentUser!.email!)
+        .get()
+        .then((snapshot) => snapshot.docs.first.data());
+
+    for (int i = 0; i < recipes.length; i++) {
+      bool isInFavorites = await favoritesRef
+          .where('userID', isEqualTo: user.id)
+          .where('recipeID', isEqualTo: recipes[i].id)
+          .get()
+          .then((snapshot) => snapshot.docs.isNotEmpty);
+
+      x.add(isInFavorites);
+    }
+
+    return x;
   }
 }

@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quickcook/models/favorite.dart';
 import 'package:quickcook/screens/HomePage.dart';
+import 'package:quickcook/services/FavoriteDA.dart';
 import 'package:quickcook/services/auth_service.dart';
 import 'package:quickcook/models/User.dart';
 import 'package:quickcook/screens/Favourites.dart';
@@ -57,11 +59,14 @@ class MyDrawer extends StatelessWidget {
                     .read<UserDA>()
                     .getUser(FirebaseAuth.instance.currentUser!.email!);
 
+                List<Favorite> favorites = await context
+                    .read<FavoriteDA>()
+                    .getFavorites(currentUser.id);
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          FavouritesPage(favourites: currentUser.favorites),
+                          FavouritesPage(favorites: favorites),
                     ));
               },
             ),
