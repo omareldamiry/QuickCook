@@ -9,13 +9,8 @@
 .history
 .svn/
 assets/
-lib/models/Recipe.dart
-lib/models/Ingredient.dart
 lib/models/Cuisine.dart
 lib/models/Diet.dart
-lib/services/RecipeDA.dart
-lib/services/auth_service.dart
-lib/screens/AddRecipeForm.dart
 
 # IntelliJ related
 *.iml

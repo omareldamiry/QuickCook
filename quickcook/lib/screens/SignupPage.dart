@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:quickcook/HomePage.dart';
-import 'package:quickcook/auth_service.dart';
+import 'package:quickcook/screens/HomePage.dart';
+import 'package:quickcook/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/models/User.dart';
 import 'package:quickcook/screens/LoginPage.dart';

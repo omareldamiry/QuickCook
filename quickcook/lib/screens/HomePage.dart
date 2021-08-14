@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:quickcook/auth_service.dart';
+import 'package:quickcook/services/auth_service.dart';
 import 'package:quickcook/widgets/appbar.dart';
 import 'package:quickcook/widgets/drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/screens/search.dart';
 
-import 'RecipeHandler.dart';
+import '../RecipeHandler.dart';
 
 // ignore: must_be_immutable
 class HomePage extends StatelessWidget {
@@ -41,7 +41,6 @@ class HomePage extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => SearchPage()),
             );
-            // context.read<RecipeDA>().addRecipe();
           }),
     );
   }

@@ -3,9 +3,8 @@ import 'package:quickcook/models/Rating.dart';
 import 'package:quickcook/services/RecipeDA.dart';
 
 class RatingDA {
-  final FirebaseFirestore _db;
 
-  RatingDA(this._db);
+  RatingDA();
 
   final ratingsRef = FirebaseFirestore.instance
       .collection("ratings")
@@ -32,7 +31,6 @@ class RatingDA {
   }
 
   Future<void> updateRating(String ratingID, Rating rating) {
-    CollectionReference ratings = _db.collection("ratings");
 
     return ratingsRef
         .doc(ratingID)

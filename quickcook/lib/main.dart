@@ -3,11 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:provider/provider.dart';
-import 'package:quickcook/HomePage.dart';
-import 'package:quickcook/auth_service.dart';
+import 'package:quickcook/screens/HomePage.dart';
+import 'package:quickcook/services/auth_service.dart';
 import 'package:quickcook/screens/LoginPage.dart';
 import 'package:quickcook/services/RatingDA.dart';
 import 'package:quickcook/services/RecipeDA.dart';
@@ -34,7 +33,7 @@ class MyApp extends StatelessWidget {
           create: (_) => RecipeDA(),
         ),
         Provider<RatingDA>(
-          create: (_) => RatingDA(FirebaseFirestore.instance),
+          create: (_) => RatingDA(),
         ),
         StreamProvider<User?>(
           create: (context) => context.read<AuthService>().authStateChanges,

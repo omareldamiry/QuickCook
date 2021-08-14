@@ -124,7 +124,6 @@ class _IngredientInputState extends State<IngredientInput> {
       ingredients = _ingredients;
       ingredientCount = _ingredients.length;
       super.widget.newIngredients(_ingredients);
-      // print(ingredients);
     });
   }
 }
@@ -177,6 +176,4 @@ class _NumericValueInputState extends State<NumericValueInput> {
       ),
     );
   }
-
-  // void _onPressed() {}
 }

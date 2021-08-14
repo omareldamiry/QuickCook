@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:quickcook/HomePage.dart';
+import 'package:quickcook/screens/HomePage.dart';
 import 'package:quickcook/models/Ingredient.dart';
-import 'package:quickcook/utilities/Ingredients.dart';
 import 'package:quickcook/widgets/appbar.dart';
 
 class SearchPage extends StatefulWidget {
