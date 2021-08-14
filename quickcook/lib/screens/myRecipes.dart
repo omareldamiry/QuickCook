@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quickcook/screens/AddRecipeForm.dart';
-import 'package:quickcook/RecipeHandler.dart';
+import 'package:quickcook/utilities/RecipeHandler.dart';
 import 'package:quickcook/widgets/appbar.dart';
 import 'package:quickcook/widgets/drawer.dart';
 

@@ -5,7 +5,7 @@ import 'package:quickcook/widgets/drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/screens/search.dart';
 
-import '../RecipeHandler.dart';
+import '../utilities/RecipeHandler.dart';
 
 // ignore: must_be_immutable
 class HomePage extends StatelessWidget {
