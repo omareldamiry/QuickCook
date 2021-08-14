@@ -1,11 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:quickcook/RecipeHandler.dart';
-import 'package:quickcook/db_service.dart';
 import 'package:quickcook/models/Rating.dart';
+import 'package:quickcook/models/Recipe.dart';
 import 'package:quickcook/services/RatingDA.dart';
-import 'package:quickcook/utilities/Ingredients.dart';
+import 'package:quickcook/services/RecipeDA.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:quickcook/widgets/appbar.dart';
 
@@ -16,16 +15,14 @@ class RecipeDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<DocumentSnapshot> recipeInstance =
-        context.read<RecipeDA>().getRecipe(id);
+    Future<Recipe> recipeInstance = context.read<RecipeDA>().getRecipe(id);
     return Scaffold(
       appBar: myAppBar(title: "Details"),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
         child: FutureBuilder(
           future: recipeInstance,
-          builder: (BuildContext context,
-              AsyncSnapshot<DocumentSnapshot<dynamic>> snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<Recipe> snapshot) {
             if (snapshot.hasError) {
               return Text("Something went wrong");
             }
@@ -34,17 +31,7 @@ class RecipeDetailsPage extends StatelessWidget {
               return CircularProgressIndicator();
             }
             if (snapshot.hasData) {
-              Recipe recipe = Recipe(
-                id: snapshot.data!.id,
-                recipeName: snapshot.data!.data()!['recipeName'],
-                recipeIngredients: snapshot.data!
-                    .data()!['ingredients']
-                    .map((element) => Ingredients.values[element])
-                    .toList()
-                    .cast<Ingredients>(),
-                recipeOwner: snapshot.data!.data()!['recipeOwner'],
-                recipeRating: snapshot.data!.data()!["rating"].toDouble(),
-              );
+              Recipe recipe = snapshot.data!;
 
               return RecipeDetails(recipe);
             }
@@ -104,7 +91,11 @@ class RecipeDetails extends StatelessWidget {
               color: Colors.amber,
             ),
             onRatingUpdate: (value) {
-              Rating rating = Rating(recipeID: _recipe.id, ratingValue: value);
+              Rating rating = Rating(
+                recipeID: _recipe.id,
+                userID: FirebaseAuth.instance.currentUser!.email,
+                ratingValue: value,
+              );
 
               context.read<RatingDA>().addRating(rating);
             },
@@ -116,9 +107,8 @@ class RecipeDetails extends StatelessWidget {
 
   List<Text> _ingredientDetails() {
     List<Text> ingredients = [];
-    _recipe.recipeIngredients!.forEach((element) {
-      ingredients
-          .add(Text(element.toString().substring(12).replaceAll('_', ' ')));
+    _recipe.recipeIngredients.forEach((element) {
+      ingredients.add(Text(element.toString()));
     });
 
     return ingredients;

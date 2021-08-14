@@ -1,13 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:quickcook/RecipeHandler.dart';
-import 'package:quickcook/db_service.dart';
+import 'package:quickcook/models/Recipe.dart';
+import 'package:quickcook/services/RecipeDA.dart';
 import 'package:quickcook/widgets/appbar.dart';
 
 class EditRecipe extends StatelessWidget {
   final Recipe recipe;
+  final Function? parentRefresh;
 
-  EditRecipe({required this.recipe});
+  EditRecipe({required this.recipe, this.parentRefresh});
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +55,9 @@ class EditRecipe extends StatelessWidget {
           color: Colors.white,
         ),
         onPressed: () {
-          recipe.recipeName = recipeName.value.text;
-          RecipeDA(FirebaseFirestore.instance).editRecipe(recipe);
-          recipe.parentRefresh!();
+          // recipe.recipeName = recipeName.value.text;
+          RecipeDA().editRecipe(recipe);
+          parentRefresh!();
           Navigator.of(context).pop();
         },
       ),

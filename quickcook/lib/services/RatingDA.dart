@@ -1,29 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:quickcook/db_service.dart';
 import 'package:quickcook/models/Rating.dart';
+import 'package:quickcook/services/RecipeDA.dart';
 
 class RatingDA {
   final FirebaseFirestore _db;
 
   RatingDA(this._db);
 
-  Future<void> addRating(Rating rating) {
-    CollectionReference ratings = _db.collection("ratings");
+  final ratingsRef = FirebaseFirestore.instance
+      .collection("ratings")
+      .withConverter(
+          fromFirestore: (snapshot, _) =>
+              Rating.fromJson(snapshot.id, snapshot.data()!),
+          toFirestore: (rating, _) => rating.toJson());
 
-    return ratings
+  Future<void> addRating(Rating rating) {
+    return ratingsRef
         .where("recipeID", isEqualTo: rating.recipeID)
-        .where("userID", isEqualTo: FirebaseAuth.instance.currentUser!.email)
+        .where("userID", isEqualTo: rating.userID)
         .get()
         .then((value) {
       if (value.size < 1) {
-        return ratings
-            .add({
-              'recipeID': rating.recipeID,
-              'userID': FirebaseAuth.instance.currentUser!.email,
-              'ratingValue': rating.ratingValue,
-            })
-            .then((value) => RecipeDA(_db).updateRecipeRating(rating))
+        return ratingsRef
+            .add(rating)
+            .then((value) => RecipeDA().updateRecipeRating(rating))
             .catchError((err) => print(err));
       }
 
@@ -34,8 +34,9 @@ class RatingDA {
   Future<void> updateRating(String ratingID, Rating rating) {
     CollectionReference ratings = _db.collection("ratings");
 
-    return ratings.doc(ratingID).update({
-      'ratingValue': rating.ratingValue,
-    }).then((value) => RecipeDA(_db).updateRecipeRating(rating));
+    return ratingsRef
+        .doc(ratingID)
+        .set(rating)
+        .then((value) => RecipeDA().updateRecipeRating(rating));
   }
 }

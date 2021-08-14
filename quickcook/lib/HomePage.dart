@@ -10,7 +10,7 @@ import 'RecipeHandler.dart';
 // ignore: must_be_immutable
 class HomePage extends StatelessWidget {
   // ignore: avoid_init_to_null
-  List<int>? ingredientQuery = null;
+  List<String>? ingredientQuery = null;
 
   HomePage({this.ingredientQuery});
 

@@ -1,16 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:quickcook/db_service.dart';
+import 'package:quickcook/models/Ingredient.dart';
+import 'package:quickcook/models/Recipe.dart';
+import 'package:provider/provider.dart';
 import 'package:quickcook/screens/AddIngredients.dart';
 import 'package:quickcook/screens/myRecipes.dart';
-import 'package:quickcook/utilities/Ingredients.dart';
+import 'package:quickcook/services/RecipeDA.dart';
 import 'package:quickcook/widgets/appbar.dart';
-
-import 'RecipeHandler.dart';
 
 class AddRecipe extends StatelessWidget {
   final TextEditingController recipeName = TextEditingController();
-  final List<Ingredients> ingredientsList = [];
+  final List<Ingredient> ingredientsList = [];
   final IngredientInput ingredientInput = IngredientInput(
     ingredients: [],
   );
@@ -63,9 +63,10 @@ class AddRecipe extends StatelessWidget {
         onPressed: () {
           Recipe newRecipe = Recipe(
             recipeName: recipeName.value.text,
-            recipeIngredients: ingredientInput.ingredients, recipeOwner: '',
+            recipeIngredients: ingredientInput.ingredients,
+            recipeOwner: FirebaseAuth.instance.currentUser!.email!,
           );
-          RecipeDA(FirebaseFirestore.instance).addRecipe(newRecipe);
+          context.read<RecipeDA>().addRecipe(newRecipe);
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => MyRecipesPage()));
         },
@@ -76,11 +77,11 @@ class AddRecipe extends StatelessWidget {
 
 // ignore: must_be_immutable
 class IngredientInput extends StatefulWidget {
-  List<Ingredients> ingredients = [];
+  List<Ingredient> ingredients = [];
 
   IngredientInput({Key? key, required this.ingredients}) : super(key: key);
 
-  void newIngredients(List<Ingredients> _ingredients) {
+  void newIngredients(List<Ingredient> _ingredients) {
     ingredients = _ingredients;
   }
 
@@ -90,10 +91,10 @@ class IngredientInput extends StatefulWidget {
 }
 
 class _IngredientInputState extends State<IngredientInput> {
-  late List<Ingredients> ingredients;
+  late List<Ingredient> ingredients;
   int ingredientCount = 0;
 
-  _IngredientInputState({required List<Ingredients> ingredients});
+  _IngredientInputState({required List<Ingredient> ingredients});
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +119,7 @@ class _IngredientInputState extends State<IngredientInput> {
     );
   }
 
-  void refresh(List<Ingredients> _ingredients) {
+  void refresh(List<Ingredient> _ingredients) {
     setState(() {
       ingredients = _ingredients;
       ingredientCount = _ingredients.length;

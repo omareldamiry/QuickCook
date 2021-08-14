@@ -8,9 +8,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/HomePage.dart';
 import 'package:quickcook/auth_service.dart';
-import 'package:quickcook/db_service.dart';
 import 'package:quickcook/screens/LoginPage.dart';
 import 'package:quickcook/services/RatingDA.dart';
+import 'package:quickcook/services/RecipeDA.dart';
 import 'package:quickcook/services/UserDA.dart';
 
 Future<void> main() async {
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           create: (_) => UserDA(),
         ),
         Provider<RecipeDA>(
-          create: (_) => RecipeDA(FirebaseFirestore.instance),
+          create: (_) => RecipeDA(),
         ),
         Provider<RatingDA>(
           create: (_) => RatingDA(FirebaseFirestore.instance),

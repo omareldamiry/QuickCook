@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quickcook/HomePage.dart';
+import 'package:quickcook/models/Ingredient.dart';
 import 'package:quickcook/utilities/Ingredients.dart';
 import 'package:quickcook/widgets/appbar.dart';
 
@@ -9,10 +10,9 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPage extends State<SearchPage> {
-  List<IngredientTile> ingredients = Ingredients.values
+  List<IngredientTile> ingredients = Ingredient.ingredientsList
       .map((e) => IngredientTile(
-            title: e.toString().substring(12).replaceAll('_', ' '),
-            index: e.index,
+            title: e.toString(),
           ))
       .toList();
 
@@ -43,12 +43,12 @@ class _SearchPage extends State<SearchPage> {
     );
   }
 
-  List<int>? ingredientQuery(List<IngredientTile> ingredients) {
-    List<int>? query = [];
+  List<String>? ingredientQuery(List<IngredientTile> ingredients) {
+    List<String>? query = [];
 
     ingredients.forEach((element) {
       // ignore: unnecessary_statements
-      element.isTrue ? query!.add(element.index) : null;
+      element.isTrue ? query!.add(element.title) : null;
     });
 
     if (query.isEmpty) {
@@ -62,13 +62,10 @@ class _SearchPage extends State<SearchPage> {
 // ignore: must_be_immutable
 class IngredientTile extends StatefulWidget {
   String title;
-  int index;
+  int? index;
   bool isChecked;
   IngredientTile(
-      {Key? key,
-      required this.title,
-      required this.index,
-      this.isChecked = false})
+      {Key? key, required this.title, this.index, this.isChecked = false})
       : super(key: key);
 
   get isTrue {

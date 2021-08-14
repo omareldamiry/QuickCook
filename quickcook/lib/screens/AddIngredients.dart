@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:quickcook/models/Ingredient.dart';
 import 'package:quickcook/screens/search.dart';
-import 'package:quickcook/utilities/Ingredients.dart';
 import 'package:quickcook/widgets/appbar.dart';
 
 // ignore: must_be_immutable
 class AddIngredients extends StatelessWidget {
-  List<Ingredients>? ingredients;
+  List<Ingredient>? ingredients;
   final Function? parentRefresh;
 
-  List<IngredientTile> ingredientsView = Ingredients.values
+  List<IngredientTile> ingredientsView = Ingredient.ingredientsList
       .map((e) => IngredientTile(
             key: UniqueKey(),
-            title: e.toString().substring(12).replaceAll('_', ' '),
-            index: e.index,
+            title: e.toString(),
           ))
       .toList();
 
@@ -43,7 +42,7 @@ class AddIngredients extends StatelessWidget {
           color: Colors.white,
         ),
         onPressed: () {
-          List<Ingredients> ingredientsList = ingredientValues();
+          List<Ingredient> ingredientsList = ingredientValues();
           parentRefresh!(ingredientsList);
           Navigator.pop(context);
         },
@@ -51,12 +50,12 @@ class AddIngredients extends StatelessWidget {
     );
   }
 
-  List<Ingredients> ingredientValues() {
-    List<Ingredients> values = [];
+  List<Ingredient> ingredientValues() {
+    List<Ingredient> values = [];
 
     ingredientsView.forEach((ingredientTile) {
       if (ingredientTile.isTrue)
-        values.add(Ingredients.values[ingredientTile.index]);
+        values.add(Ingredient.ingredients()[ingredientTile.title]!);
     });
 
     return values;
@@ -77,7 +76,7 @@ class IngredientPicker extends StatefulWidget {
 }
 
 class _IngredientPickerState extends State<IngredientPicker> {
-  List<Ingredients> ingredientsList = [];
+  List<Ingredient> ingredientsList = [];
   List<IngredientTile> picker = [];
   TextEditingController search = TextEditingController();
   Function? parentRefresh;
@@ -117,7 +116,7 @@ class _IngredientPickerState extends State<IngredientPicker> {
 
     if (keyword.isNotEmpty)
       ingredientsView!.forEach((e) {
-        if (e.title.contains(keyword)) {
+        if (e.title.toUpperCase().contains(keyword)) {
           picker.add(e);
         }
       });
@@ -125,9 +124,10 @@ class _IngredientPickerState extends State<IngredientPicker> {
 
   void addSelected() {
     picker.forEach((e) {
-      if (e.isTrue && !ingredientsList.contains(Ingredients.values[e.index])) {
-        ingredientsView![e.index].newValue(true);
-        ingredientsList.add(Ingredients.values[e.index]);
+      if (e.isTrue &&
+          !ingredientsList.contains(Ingredient.ingredients()[e.title])) {
+        // ingredientsView![e.index].newValue(true);
+        ingredientsList.add(Ingredient.ingredients()[e.title]!);
       }
     });
   }

@@ -20,7 +20,7 @@ class Rating {
           recipeID: json['recipeID']! as String,
           userID: json['userID'],
           ratingValue: json['ratingValue']! as double,
-          feedback: json['feedback'],
+          feedback: json['feedback'] != null ? json['feedback'] as String : "",
         );
 
   Map<String, Object?> toJson() {
