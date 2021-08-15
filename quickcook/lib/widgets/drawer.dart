@@ -33,10 +33,9 @@ class MyDrawer extends StatelessWidget {
             ListTile(
               title: Text("Home"),
               onTap: () {
+                Navigator.pop(context);
                 if (currentRoute == '/') {
-                  Navigator.pop(context);
                 } else {
-                  Navigator.pop(context);
                   Navigator.pushReplacementNamed(context, '/',
                       arguments: <String>[]);
                 }
@@ -49,13 +48,11 @@ class MyDrawer extends StatelessWidget {
             ListTile(
               title: Text("My Recipes"),
               onTap: () {
+                Navigator.pop(context);
                 if (currentRoute == '/myrecipes') {
-                  Navigator.pop(context);
                 } else if (currentRoute == '/') {
-                  Navigator.pop(context);
                   Navigator.pushNamed(context, '/myrecipes');
                 } else {
-                  Navigator.pop(context);
                   Navigator.pushReplacementNamed(context, '/myrecipes');
                 }
               },
@@ -75,14 +72,12 @@ class MyDrawer extends StatelessWidget {
                     .read<FavoriteDA>()
                     .getFavorites(currentUser.id);
 
+                Navigator.pop(context);
                 if (currentRoute == '/favorites') {
-                  Navigator.pop(context);
                 } else if (currentRoute == '/') {
-                  Navigator.pop(context);
                   Navigator.pushNamed(context, '/favorites',
                       arguments: favorites);
                 } else {
-                  Navigator.pop(context);
                   Navigator.pushReplacementNamed(context, '/favorites',
                       arguments: favorites);
                 }
@@ -99,14 +94,12 @@ class MyDrawer extends StatelessWidget {
                     .read<UserDA>()
                     .getUser(FirebaseAuth.instance.currentUser!.email!);
 
+                Navigator.pop(context);
                 if (currentRoute == '/profile') {
-                  Navigator.pop(context);
                 } else if (currentRoute == '/') {
-                  Navigator.pop(context);
                   Navigator.pushNamed(context, '/profile',
                       arguments: currentUser);
                 } else {
-                  Navigator.pop(context);
                   Navigator.pushReplacementNamed(context, '/profile',
                       arguments: currentUser);
                 }
@@ -121,6 +114,9 @@ class MyDrawer extends StatelessWidget {
             color: Colors.red,
           ),
           onTap: () async {
+            Navigator.pop(context);
+
+            if (currentRoute != '/') Navigator.pop(context);
             await context.read<AuthService>().signOut();
           },
         ),

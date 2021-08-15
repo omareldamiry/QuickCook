@@ -11,7 +11,7 @@ class UserData {
     required this.email,
     required this.firstName,
     required this.lastName,
-    this.profilePic,
+    this.profilePic = "",
   });
 
   UserData.fromJson(String jsonID, Map<String, dynamic> json)
