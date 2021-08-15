@@ -3,11 +3,11 @@ import 'package:quickcook/models/Recipe.dart';
 import 'package:quickcook/services/RecipeDA.dart';
 import 'package:quickcook/widgets/appbar.dart';
 
-class EditRecipe extends StatelessWidget {
+class EditRecipePage extends StatelessWidget {
   final Recipe recipe;
   final Function? parentRefresh;
 
-  EditRecipe({required this.recipe, this.parentRefresh});
+  EditRecipePage({required this.recipe, this.parentRefresh});
 
   @override
   Widget build(BuildContext context) {

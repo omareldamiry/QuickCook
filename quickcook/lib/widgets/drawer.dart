@@ -2,16 +2,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/models/favorite.dart';
-import 'package:quickcook/screens/HomePage.dart';
 import 'package:quickcook/services/FavoriteDA.dart';
 import 'package:quickcook/services/auth_service.dart';
 import 'package:quickcook/models/User.dart';
-import 'package:quickcook/screens/Favourites.dart';
-import 'package:quickcook/screens/ProfilePage.dart';
-import 'package:quickcook/screens/myRecipes.dart';
 import 'package:quickcook/services/UserDA.dart';
 
+// TODO: Refactor navigation logic into a single _navigate() function
+
 class MyDrawer extends StatelessWidget {
+  final String currentRoute;
+
+  MyDrawer({required this.currentRoute});
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -31,9 +33,13 @@ class MyDrawer extends StatelessWidget {
             ListTile(
               title: Text("Home"),
               onTap: () {
-                // Navigator.pop(context);
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => HomePage()));
+                if (currentRoute == '/') {
+                  Navigator.pop(context);
+                } else {
+                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, '/',
+                      arguments: <String>[]);
+                }
               },
             ),
             Divider(
@@ -43,9 +49,15 @@ class MyDrawer extends StatelessWidget {
             ListTile(
               title: Text("My Recipes"),
               onTap: () {
-                // Navigator.pop(context);
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => MyRecipesPage()));
+                if (currentRoute == '/myrecipes') {
+                  Navigator.pop(context);
+                } else if (currentRoute == '/') {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/myrecipes');
+                } else {
+                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, '/myrecipes');
+                }
               },
             ),
             Divider(
@@ -62,12 +74,18 @@ class MyDrawer extends StatelessWidget {
                 List<Favorite> favorites = await context
                     .read<FavoriteDA>()
                     .getFavorites(currentUser.id);
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          FavouritesPage(favorites: favorites),
-                    ));
+
+                if (currentRoute == '/favorites') {
+                  Navigator.pop(context);
+                } else if (currentRoute == '/') {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/favorites',
+                      arguments: favorites);
+                } else {
+                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, '/favorites',
+                      arguments: favorites);
+                }
               },
             ),
             Divider(
@@ -81,10 +99,17 @@ class MyDrawer extends StatelessWidget {
                     .read<UserDA>()
                     .getUser(FirebaseAuth.instance.currentUser!.email!);
 
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ProfilePage(user: currentUser)));
+                if (currentRoute == '/profile') {
+                  Navigator.pop(context);
+                } else if (currentRoute == '/') {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/profile',
+                      arguments: currentUser);
+                } else {
+                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, '/profile',
+                      arguments: currentUser);
+                }
               },
             ),
           ],
@@ -95,11 +120,13 @@ class MyDrawer extends StatelessWidget {
             Icons.logout,
             color: Colors.red,
           ),
-          onTap: () {
-            context.read<AuthService>().signOut();
+          onTap: () async {
+            await context.read<AuthService>().signOut();
           },
         ),
       ),
     );
   }
+
+  void _navigate(String dest, Object? args) {}
 }

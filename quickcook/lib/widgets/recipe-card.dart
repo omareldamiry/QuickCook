@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:quickcook/models/Recipe.dart';
 import 'package:quickcook/models/User.dart';
 import 'package:quickcook/models/favorite.dart';
-import 'package:quickcook/screens/EditRecipeForm.dart';
-import 'package:quickcook/screens/RecipeDetails.dart';
 import 'package:quickcook/services/FavoriteDA.dart';
 import 'package:quickcook/services/RecipeDA.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/services/UserDA.dart';
 
+// ignore: must_be_immutable
 class RecipeCard extends StatefulWidget {
   final Recipe recipe;
   bool isFavorite;
@@ -46,12 +45,7 @@ class _RecipeCardState extends State<RecipeCard> {
         children: [
           GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => RecipeDetailsPage(context, recipe.id),
-                ),
-              );
+              Navigator.pushNamed(context, '/details', arguments: recipe.id);
             },
             child: Container(
               height: 200,
@@ -119,14 +113,12 @@ class _RecipeCardState extends State<RecipeCard> {
             },
             onSelected: (String value) async {
               if (value.compareTo("Edit") == 0) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => EditRecipe(
-                      recipe: recipe,
-                      parentRefresh: parentRefresh,
-                    ),
-                  ),
-                );
+                Map<String, Object?> args = {
+                  'recipe': recipe,
+                  'refresh': parentRefresh
+                };
+
+                Navigator.pushNamed(context, '/editrecipe', arguments: args);
               } else if (value.compareTo("Delete") == 0) {
                 await context.read<RecipeDA>().deleteRecipe(recipe.id);
                 print("${recipe.recipeName} deleted");

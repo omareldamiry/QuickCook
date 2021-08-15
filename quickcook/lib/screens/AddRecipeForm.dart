@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:quickcook/models/Ingredient.dart';
 import 'package:quickcook/models/Recipe.dart';
 import 'package:provider/provider.dart';
-import 'package:quickcook/screens/AddIngredients.dart';
-import 'package:quickcook/screens/myRecipes.dart';
 import 'package:quickcook/services/RecipeDA.dart';
 import 'package:quickcook/widgets/appbar.dart';
 
-class AddRecipe extends StatelessWidget {
+class AddRecipePage extends StatelessWidget {
   final TextEditingController recipeName = TextEditingController();
   final List<Ingredient> ingredientsList = [];
   final IngredientInput ingredientInput = IngredientInput(
@@ -67,8 +65,7 @@ class AddRecipe extends StatelessWidget {
             recipeOwner: FirebaseAuth.instance.currentUser!.email!,
           );
           context.read<RecipeDA>().addRecipe(newRecipe);
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => MyRecipesPage()));
+          Navigator.pushReplacementNamed(context, '/myrecipes');
         },
       ),
     );
@@ -107,11 +104,13 @@ class _IngredientInputState extends State<IngredientInput> {
             backgroundColor: MaterialStateProperty.all(Colors.orange[100]),
           ),
           onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        AddIngredients(parentRefresh: refresh)));
+            // Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (context) =>
+            //             AddIngredientsPage(parentRefresh: refresh)));
+
+            Navigator.pushNamed(context, '/addingredients', arguments: refresh);
           },
           child: Text("Add Ingredients"),
         ),

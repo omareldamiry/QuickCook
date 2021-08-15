@@ -65,7 +65,7 @@ class RecipeDA {
     return recipesQuerySnapshot;
   }
 
-  Future<List<Recipe>> getFavourites(
+  Future<List<Recipe>> getFavorites(
       // ignore: avoid_init_to_null
       {List<String>? favoritesIDs = null}) async {
     List<Recipe> favorites = [];

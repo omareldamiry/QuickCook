@@ -24,9 +24,14 @@ class FavoriteDA {
     await favoritesRef
         .where('userID', isEqualTo: userID)
         .get()
-        .then((value) => value.docs.forEach((snapshot) {
+        .then(
+          (value) => value.docs.forEach(
+            (snapshot) {
               favorites.add(snapshot.data());
-            }));
+            },
+          ),
+        )
+        .catchError((err) => print(err));
 
     return favorites;
   }

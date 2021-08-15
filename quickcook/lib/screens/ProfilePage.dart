@@ -11,7 +11,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: myAppBar(title: "Profile"),
-      drawer: MyDrawer(),
+      drawer: MyDrawer(currentRoute: '/profile',),
       body: Container(
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(horizontal: 20),

@@ -10,8 +10,7 @@ import 'package:quickcook/widgets/appbar.dart';
 
 class RecipeDetailsPage extends StatelessWidget {
   final String id;
-  final BuildContext context;
-  RecipeDetailsPage(this.context, this.id);
+  RecipeDetailsPage({required this.id});
 
   @override
   Widget build(BuildContext context) {

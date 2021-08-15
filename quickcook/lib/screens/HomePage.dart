@@ -3,7 +3,7 @@ import 'package:quickcook/services/auth_service.dart';
 import 'package:quickcook/widgets/appbar.dart';
 import 'package:quickcook/widgets/drawer.dart';
 import 'package:provider/provider.dart';
-import 'package:quickcook/screens/search.dart';
+import 'package:quickcook/screens/SearchPage.dart';
 
 import '../utilities/RecipeHandler.dart';
 
@@ -16,6 +16,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (ingredientQuery != null) if (ingredientQuery!.isEmpty)
+      ingredientQuery = null;
     return Scaffold(
       appBar: myAppBar(
         title: "QuickCook",
@@ -29,7 +31,7 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      drawer: MyDrawer(),
+      drawer: MyDrawer(currentRoute: '/',),
       body: RecipeList(ingredientsQuery: ingredientQuery),
       floatingActionButton: FloatingActionButton(
           child: Icon(

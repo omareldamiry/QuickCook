@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:quickcook/models/Ingredient.dart';
-import 'package:quickcook/screens/search.dart';
+import 'package:quickcook/screens/SearchPage.dart';
 import 'package:quickcook/widgets/appbar.dart';
 
 // ignore: must_be_immutable
-class AddIngredients extends StatelessWidget {
+class AddIngredientsPage extends StatelessWidget {
   List<Ingredient>? ingredients;
   final Function? parentRefresh;
 
@@ -15,7 +15,7 @@ class AddIngredients extends StatelessWidget {
           ))
       .toList();
 
-  AddIngredients({Key? key, this.parentRefresh, this.ingredients})
+  AddIngredientsPage({Key? key, this.parentRefresh, this.ingredients})
       : super(key: key);
 
   @override

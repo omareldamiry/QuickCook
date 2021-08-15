@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:quickcook/screens/HomePage.dart';
 import 'package:quickcook/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/screens/SignupPage.dart';
@@ -53,7 +52,7 @@ class _LoginFormState extends State<LoginForm> {
   bool _error = false;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  static GlobalKey<FormState> formKey = new GlobalKey<FormState>();
+  static UniqueKey formKey = new UniqueKey();
 
   void initializeFlutterFire() async {
     try {
@@ -137,17 +136,20 @@ class _LoginFormState extends State<LoginForm> {
                         foregroundColor:
                             MaterialStateProperty.all(Colors.white),
                       ),
-                      onPressed: () {
-                        context.read<AuthService>().signIn(
-                            email: emailController.text.trim(),
-                            password: passwordController.text.trim());
+                      onPressed: () async {
+                        String? status = await context
+                            .read<AuthService>()
+                            .signIn(
+                                email: emailController.text.trim(),
+                                password: passwordController.text.trim())
+                            .then((value) => value);
 
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomePage(),
-                          ),
-                        );
+                        if (status == "Signed in") {
+                          // Navigator.pushReplacementNamed(context, '/');
+                        } else {
+                          // Signin failure implementation
+                          print("Sign in failed");
+                        }
                       },
                     ),
                     SizedBox(

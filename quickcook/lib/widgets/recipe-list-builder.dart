@@ -1,12 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quickcook/models/Recipe.dart';
-import 'package:quickcook/models/User.dart';
-import 'package:quickcook/models/favorite.dart';
-import 'package:quickcook/services/FavoriteDA.dart';
 import 'package:quickcook/services/RecipeDA.dart';
-import 'package:quickcook/services/UserDA.dart';
 import 'package:quickcook/widgets/recipe-card.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +25,16 @@ Widget Function(BuildContext, AsyncSnapshot<QuerySnapshot<Recipe>>)
               snapshot.data!.docs.map((e) => e.data()).toList(),
             ),
         builder: (BuildContext context, AsyncSnapshot<List<bool>> s) {
+          if (s.hasError)
+            return Center(
+              child: Text("Something went wrong with favorites."),
+            );
+
+          if (s.connectionState == ConnectionState.waiting)
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+
           if (s.hasData)
             return new ListView.builder(
               clipBehavior: Clip.none,
@@ -49,9 +54,7 @@ Widget Function(BuildContext, AsyncSnapshot<QuerySnapshot<Recipe>>)
               },
             );
 
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+          return Container();
         },
       );
     }
