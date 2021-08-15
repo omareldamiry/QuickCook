@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:quickcook/screens/AddRecipeForm.dart';
 import 'package:quickcook/utilities/RecipeHandler.dart';
 import 'package:quickcook/widgets/appbar.dart';
 import 'package:quickcook/widgets/drawer.dart';
@@ -14,7 +13,9 @@ class _MyRecipesPage extends State<MyRecipesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: myAppBar(title: "My Recipes"),
-      drawer: MyDrawer(currentRoute: '/myrecipes',),
+      drawer: MyDrawer(
+        currentRoute: '/myrecipes',
+      ),
       body: Container(
         alignment: Alignment.center,
         child: MyRecipeList(),
@@ -25,8 +26,7 @@ class _MyRecipesPage extends State<MyRecipesPage> {
           color: Colors.white,
         ),
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddRecipePage()));
+          Navigator.pushNamed(context, '/addrecipe');
         },
       ),
     );

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 class DoubleWidgetContainer extends StatelessWidget {
   final Widget? widget1;
   final Widget? widget2;
-  const DoubleWidgetContainer({Key? key, this.widget1, this.widget2})
+  final List<String?>? labels;
+  const DoubleWidgetContainer(
+      {Key? key, this.widget1, this.widget2, this.labels})
       : super(key: key);
 
   @override
@@ -14,7 +16,7 @@ class DoubleWidgetContainer extends StatelessWidget {
       padding: EdgeInsets.symmetric(
           horizontal: screenSize.width * 0.05,
           vertical: screenSize.width * 0.04),
-      height: screenSize.height * 0.18,
+      // height: screenSize.height * 0.18,
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -31,12 +33,13 @@ class DoubleWidgetContainer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Stack(
+            clipBehavior: Clip.none,
             alignment: Alignment.centerLeft,
             children: [
               Positioned(
                 top: 0,
                 child: Text(
-                  "Email",
+                  labels!.isNotEmpty ? labels![0]! : "",
                   style: TextStyle(
                     color: Colors.grey,
                   ),
@@ -47,9 +50,24 @@ class DoubleWidgetContainer extends StatelessWidget {
           ),
           Divider(
             thickness: 1,
-            height: 0,
+            height: 20,
           ),
-          widget2!,
+          Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.centerLeft,
+            children: [
+              Positioned(
+                top: 0,
+                child: Text(
+                  labels!.isNotEmpty ? labels![1]! : "",
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+              widget2!,
+            ],
+          ),
         ],
       ),
     );

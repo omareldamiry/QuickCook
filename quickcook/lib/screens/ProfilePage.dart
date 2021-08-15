@@ -72,24 +72,26 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                   widget2: TextButton(
-                      style: TextButton.styleFrom(
-                        primary: Colors.grey,
-                        backgroundColor: Colors.grey[200],
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        elevation: 2,
-                        shadowColor: Color(Colors.grey[200]!.value),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(100),
-                          ),
+                    style: TextButton.styleFrom(
+                      primary: Colors.grey,
+                      backgroundColor: Colors.grey[200],
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      elevation: 2,
+                      shadowColor: Color(Colors.grey[200]!.value),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(100),
                         ),
                       ),
-                      onPressed: () {},
-                      child: Text(
-                        "Change Password",
-                        style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.w400),
-                      )),
+                    ),
+                    onPressed: () {},
+                    child: Text(
+                      "Change Password",
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.w400),
+                    ),
+                  ),
+                  labels: ["Email", ""],
                 ),
                 Divider(
                   thickness: 1,

@@ -85,29 +85,95 @@ class _IngredientPickerState extends State<IngredientPicker> {
 
   _IngredientPickerState({this.parentRefresh, this.ingredientsView});
 
+  List<bool> panelControl = [];
   @override
   Widget build(BuildContext context) {
     ingredientsList = [];
     return Column(
-      children: <Widget>[ingredientSearchBar()] + picker,
+      children: <Widget>[
+            ingredientSearchBar(),
+            SizedBox(
+              height: 20,
+            ),
+            if (picker.isEmpty) ...expansionTileBuilder() else SizedBox(),
+          ] +
+          picker +
+          [
+            SizedBox(
+              height: 80,
+            ),
+          ],
     );
   }
 
-  TextFormField ingredientSearchBar() {
-    return TextFormField(
-      controller: search,
-      decoration: InputDecoration(
-        labelText: "Search",
-        icon: Icon(Icons.search),
-      ),
-      onChanged: (value) {
-        // addSelected();
+  void expansionCallBack(int index, bool isExpand) {
+    setState(() {
+      panelControl[index] = !isExpand;
+    });
+  }
 
-        setState(() {
-          picker.clear();
-          ingredientSearchResult(keyword: value);
-        });
-      },
+  List<Widget> expansionTileBuilder() {
+    List<Widget> exTiles = [];
+
+    IngredientType.values.forEach((type) {
+      panelControl.add(false);
+      List<IngredientTile> temp = [];
+
+      ingredientsView!.forEach((tile) {
+        if (Ingredient.ingredients()[tile.title]!.type == type) {
+          temp.add(tile);
+        }
+      });
+
+      exTiles.add(
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 5),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey[200]!,
+                offset: Offset(0, 2),
+                blurRadius: 2,
+                spreadRadius: 2,
+              ),
+            ],
+            borderRadius: BorderRadius.circular(50),
+          ),
+          child: ExpansionTile(
+            tilePadding: EdgeInsets.symmetric(horizontal: 25),
+            childrenPadding: EdgeInsets.only(left: 10),
+            title: Text(
+              type.toString().substring(15),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            backgroundColor: Colors.white,
+            children: temp,
+          ),
+        ),
+      );
+    });
+    return exTiles;
+  }
+
+  Widget ingredientSearchBar() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: TextFormField(
+        controller: search,
+        decoration: InputDecoration(
+            labelText: "Search", suffixIcon: Icon(Icons.search)),
+        onChanged: (value) {
+          addSelected();
+
+          setState(() {
+            picker.clear();
+            ingredientSearchResult(keyword: value);
+          });
+        },
+      ),
     );
   }
 
@@ -116,7 +182,7 @@ class _IngredientPickerState extends State<IngredientPicker> {
 
     if (keyword.isNotEmpty)
       ingredientsView!.forEach((e) {
-        if (e.title.toUpperCase().contains(keyword)) {
+        if (e.title.toUpperCase().startsWith(keyword)) {
           picker.add(e);
         }
       });
@@ -126,7 +192,6 @@ class _IngredientPickerState extends State<IngredientPicker> {
     picker.forEach((e) {
       if (e.isTrue &&
           !ingredientsList.contains(Ingredient.ingredients()[e.title])) {
-        // ingredientsView![e.index].newValue(true);
         ingredientsList.add(Ingredient.ingredients()[e.title]!);
       }
     });

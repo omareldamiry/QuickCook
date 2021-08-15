@@ -31,7 +31,7 @@ class _SignupFormState extends State<SignupForm> {
   final TextEditingController lNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  static GlobalKey<FormState> formKey = new GlobalKey<FormState>();
+  static Key formKey = new UniqueKey();
 
   void initializeFlutterFire() async {
     try {

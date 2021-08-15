@@ -5,9 +5,16 @@ import 'package:quickcook/models/Recipe.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/services/RecipeDA.dart';
 import 'package:quickcook/widgets/appbar.dart';
+import 'package:quickcook/widgets/double-widget-container.dart';
+import 'package:quickcook/widgets/image-upload-widget.dart';
 
 class AddRecipePage extends StatelessWidget {
   final TextEditingController recipeName = TextEditingController();
+  final TextEditingController recipeDesc = TextEditingController();
+  late final int calCount;
+  late final int prepTime;
+  final NumericValueInput calWidget = NumericValueInput(unit: "Cal(s)");
+  final NumericValueInput timeWidget = NumericValueInput(unit: "min(s)");
   final List<Ingredient> ingredientsList = [];
   final IngredientInput ingredientInput = IngredientInput(
     ingredients: [],
@@ -17,39 +24,71 @@ class AddRecipePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: myAppBar(title: "Add New Recipe"),
-      body: Container(
-        margin: EdgeInsets.only(top: 10),
-        alignment: Alignment.center,
-        child: Form(
-          child: Column(
-            children: [
-              Text(
-                "Add Recipe",
-                style: TextStyle(
-                  fontSize: 27,
-                  fontWeight: FontWeight.bold,
+      body: Form(
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Container(
+            padding: EdgeInsets.symmetric(
+                vertical: 20,
+                horizontal: MediaQuery.of(context).size.width * 0.1),
+            alignment: Alignment.center,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  "Add Recipe",
+                  style: TextStyle(
+                    fontSize: 27,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.left,
                 ),
-              ),
-              // Form items go here
-              //
-              Container(
-                margin: EdgeInsets.only(top: 10, bottom: 20),
-                width: MediaQuery.of(context).size.width * 0.8,
-                alignment: Alignment.center,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: recipeName,
-                      maxLength: 50,
-                      decoration: InputDecoration(
-                        labelText: "Recipe Name",
+                // Form items go here
+                //
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 10, bottom: 0),
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: [
+                      DoubleWidgetContainer(
+                        widget1: TextFormField(
+                          controller: recipeName,
+                          maxLength: 50,
+                          decoration: InputDecoration(
+                            labelText: "Recipe Name",
+                          ),
+                        ),
+                        widget2: ingredientInput,
+                        labels: ["", "Ingredients"],
                       ),
-                    ),
-                    ingredientInput,
-                  ],
+                      SizedBox(
+                        height: 20,
+                      ),
+                      DoubleWidgetContainer(
+                        widget1: calWidget,
+                        widget2: timeWidget,
+                        labels: ["Calories", "Preparation Time"],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      DoubleWidgetContainer(
+                        widget1: ImageUploadWidget(),
+                        widget2: TextFormField(
+                          enabled: false,
+                          maxLength: 50,
+                        ),
+                        labels: ["Recipe Picture", "Description"],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -62,8 +101,11 @@ class AddRecipePage extends StatelessWidget {
           Recipe newRecipe = Recipe(
             recipeName: recipeName.value.text,
             recipeIngredients: ingredientInput.ingredients,
+            recipeCal: calWidget.count,
+            recipePrepTime: timeWidget.count,
             recipeOwner: FirebaseAuth.instance.currentUser!.email!,
           );
+
           context.read<RecipeDA>().addRecipe(newRecipe);
           Navigator.pushReplacementNamed(context, '/myrecipes');
         },
@@ -100,16 +142,16 @@ class _IngredientInputState extends State<IngredientInput> {
       children: [
         Text("$ingredientCount selected"),
         TextButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.orange[100]),
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 11),
+            backgroundColor: Colors.orange[100],
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(50),
+              ),
+            ),
           ),
           onPressed: () {
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (context) =>
-            //             AddIngredientsPage(parentRefresh: refresh)));
-
             Navigator.pushNamed(context, '/addingredients', arguments: refresh);
           },
           child: Text("Add Ingredients"),
@@ -129,15 +171,17 @@ class _IngredientInputState extends State<IngredientInput> {
 
 class NumericValueInput extends StatefulWidget {
   final String unit;
+  final Key key = new UniqueKey();
+  int count = 1;
 
-  const NumericValueInput({this.unit = ""});
+  NumericValueInput({this.unit = ""});
 
   @override
   _NumericValueInputState createState() => _NumericValueInputState(unit);
 }
 
 class _NumericValueInputState extends State<NumericValueInput> {
-  int count = 0;
+  int count = 1;
   String unit = "";
 
   _NumericValueInputState(this.unit);
@@ -153,10 +197,13 @@ class _NumericValueInputState extends State<NumericValueInput> {
               Icons.chevron_left,
               color: Colors.orange,
             ),
+            color: Colors.red,
+            splashColor: Colors.orange,
             onPressed: () {
-              if (count > 0)
+              if (count > 1)
                 setState(() {
                   count--;
+                  widget.count = count;
                 });
             },
           ),
@@ -169,6 +216,7 @@ class _NumericValueInputState extends State<NumericValueInput> {
               onPressed: () {
                 setState(() {
                   count++;
+                  widget.count = count;
                 });
               }),
         ],
