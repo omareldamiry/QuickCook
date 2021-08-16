@@ -51,20 +51,22 @@ class _RecipeCardState extends State<RecipeCard> {
               Navigator.pushNamed(context, '/details', arguments: recipe.id);
             },
             child: FutureBuilder<String?>(
-                future: recipePicPath,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting)
-                    return Container(
-                      height: 200,
-                      alignment: Alignment.center,
-                      width: screenWidth * 0.8,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: Colors.grey[200],
-                      ),
-                      child: CircularProgressIndicator(),
-                    );
+              future: recipePicPath,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting)
                   return Container(
+                    height: 200,
+                    alignment: Alignment.center,
+                    width: screenWidth * 0.8,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.grey[200],
+                    ),
+                    child: CircularProgressIndicator(),
+                  );
+                return Hero(
+                  tag: '${recipe.id}',
+                  child: Container(
                     height: 200,
                     width: screenWidth * 0.8,
                     decoration: BoxDecoration(
@@ -79,8 +81,10 @@ class _RecipeCardState extends State<RecipeCard> {
                         ), //? Placeholder
                       ),
                     ),
-                  );
-                }),
+                  ),
+                );
+              },
+            ),
           ),
           PopupMenuButton(
             icon: Container(

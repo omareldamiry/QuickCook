@@ -30,7 +30,8 @@ class _SearchPage extends State<SearchPage> {
         ),
         onPressed: () {
           Navigator.pop(context);
-          Navigator.pushReplacementNamed(context, '/', arguments: ingredientQuery(ingredients));
+          Navigator.pushReplacementNamed(context, '/',
+              arguments: ingredientQuery(ingredients));
         },
       ),
     );
@@ -87,7 +88,7 @@ class _IngredientTileState extends State<IngredientTile> {
       onChanged: (bool? value) {
         setState(() {
           changed = value!;
-          super.widget.newValue(changed);
+          widget.newValue(changed);
         });
       },
       title: Text("$title"),

@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:quickcook/screens/HomePage.dart';
 import 'package:quickcook/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/models/User.dart';
@@ -156,25 +155,22 @@ class _SignupFormState extends State<SignupForm> {
                             MaterialStateProperty.all(Colors.white),
                       ),
                       onPressed: _isPasswordMatching
-                          ? () {
+                          ? () async {
                               UserData newUser = UserData(
                                 email: emailController.text.trim(),
                                 firstName: fNameController.text.trim(),
                                 lastName: lNameController.text.trim(),
                               );
 
-                              context.read<UserDA>().addUser(newUser);
+                              await context.read<UserDA>().addUser(newUser);
 
-                              context.read<AuthService>().signUp(
-                                  email: emailController.text.trim(),
-                                  password: passwordController.text.trim());
+                              await context
+                                  .read<AuthService>()
+                                  .signUp(
+                                      email: emailController.text.trim(),
+                                      password: passwordController.text.trim());
 
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomePage(),
-                                ),
-                              );
+                              Navigator.pushReplacementNamed(context, '/');
                             }
                           : null,
                     ),

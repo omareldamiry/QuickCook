@@ -9,23 +9,38 @@ import 'package:quickcook/widgets/appbar.dart';
 import 'package:quickcook/widgets/double-widget-container.dart';
 import 'package:quickcook/widgets/image-upload-widget.dart';
 
+// ignore: must_be_immutable
 class AddRecipePage extends StatelessWidget {
-  final TextEditingController recipeName = TextEditingController();
-  final TextEditingController recipeDesc = TextEditingController();
+  final String mode;
+  final Recipe? recipe;
+  late final TextEditingController recipeName = TextEditingController();
+  late final TextEditingController recipeDesc = TextEditingController();
   late final int calCount;
   late final int prepTime;
-  final NumericValueInput calWidget = NumericValueInput(unit: "Cal(s)");
-  final NumericValueInput timeWidget = NumericValueInput(unit: "min(s)");
-  final ImageUploadWidget imageWidget = ImageUploadWidget();
-  final List<Ingredient> ingredientsList = [];
-  final IngredientInput ingredientInput = IngredientInput(
-    ingredients: [],
-  );
+  late NumericValueInput calWidget;
+  late NumericValueInput timeWidget;
+  late final ImageUploadWidget imageWidget = ImageUploadWidget();
+  // late final List<Ingredient> ingredientsList;
+  late IngredientInput ingredientInput;
+
+  AddRecipePage({this.mode = "add", this.recipe});
 
   @override
   Widget build(BuildContext context) {
+    if (recipe != null) {
+      recipeName.text = recipe!.recipeName;
+      calWidget = NumericValueInput(count: recipe!.recipeCal, unit: "Cal(s)");
+      timeWidget =
+          NumericValueInput(count: recipe!.recipePrepTime, unit: "min(s)");
+      ingredientInput = IngredientInput(ingredients: recipe!.recipeIngredients);
+    } else {
+      calWidget = NumericValueInput(unit: "Cal(s)");
+      timeWidget = NumericValueInput(unit: "min(s)");
+      ingredientInput = IngredientInput(ingredients: []);
+    }
+
     return Scaffold(
-      appBar: myAppBar(title: "Add New Recipe"),
+      appBar: myAppBar(title: mode == "add" ? "Add New Recipe" : "Edit Recipe"),
       body: Form(
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
@@ -38,7 +53,7 @@ class AddRecipePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  "Add Recipe",
+                  mode == "add" ? "Add Recipe" : "Edit Recipe",
                   style: TextStyle(
                     fontSize: 27,
                     fontWeight: FontWeight.bold,
@@ -113,11 +128,16 @@ class AddRecipePage extends StatelessWidget {
             recipePicLink: dest + imageWidget.img!.name,
           );
 
-          await context
-              .read<StorageService>()
-              .uploadFile(filePath, fileName, dest);
+          if (mode == "add") {
+            await context
+                .read<StorageService>()
+                .uploadFile(filePath, fileName, dest);
+            await context.read<RecipeDA>().addRecipe(newRecipe);
+          } else {
+            print(newRecipe.toJson());
+            // await context.read<RecipeDA>().editRecipe(newRecipe);
+          }
 
-          await context.read<RecipeDA>().addRecipe(newRecipe);
           Navigator.pushReplacementNamed(context, '/myrecipes');
         },
       ),
@@ -127,9 +147,10 @@ class AddRecipePage extends StatelessWidget {
 
 // ignore: must_be_immutable
 class IngredientInput extends StatefulWidget {
-  List<Ingredient> ingredients = [];
+  Key key = new UniqueKey();
+  List<Ingredient> ingredients;
 
-  IngredientInput({Key? key, required this.ingredients}) : super(key: key);
+  IngredientInput({required this.ingredients});
 
   void newIngredients(List<Ingredient> _ingredients) {
     ingredients = _ingredients;
@@ -141,17 +162,19 @@ class IngredientInput extends StatefulWidget {
 }
 
 class _IngredientInputState extends State<IngredientInput> {
-  late List<Ingredient> ingredients;
-  int ingredientCount = 0;
+  List<Ingredient> ingredients;
+  // int ingredientCount = 0;
 
-  _IngredientInputState({required List<Ingredient> ingredients});
+  _IngredientInputState({required this.ingredients});
 
   @override
   Widget build(BuildContext context) {
+    // ingredientCount = ingredients.length;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text("$ingredientCount selected"),
+        Text("${ingredients.length} selected"),
         TextButton(
           style: TextButton.styleFrom(
             padding: EdgeInsets.symmetric(horizontal: 11),
@@ -162,8 +185,13 @@ class _IngredientInputState extends State<IngredientInput> {
               ),
             ),
           ),
-          onPressed: () {
-            Navigator.pushNamed(context, '/addingredients', arguments: refresh);
+          onPressed: () async {
+            Map<String, Object?> args = {
+              'ingredients': ingredients,
+              'refresh': refresh
+            };
+            await Navigator.pushNamed(context, '/addingredients',
+                arguments: args);
           },
           child: Text("Add Ingredients"),
         ),
@@ -174,8 +202,8 @@ class _IngredientInputState extends State<IngredientInput> {
   void refresh(List<Ingredient> _ingredients) {
     setState(() {
       ingredients = _ingredients;
-      ingredientCount = _ingredients.length;
-      super.widget.newIngredients(_ingredients);
+      // ingredientCount = _ingredients.length;
+      widget.newIngredients(_ingredients);
     });
   }
 }
@@ -184,19 +212,19 @@ class _IngredientInputState extends State<IngredientInput> {
 class NumericValueInput extends StatefulWidget {
   final String unit;
   final Key key = new UniqueKey();
-  int count = 1;
+  int count;
 
-  NumericValueInput({this.unit = ""});
+  NumericValueInput({this.count = 1, this.unit = ""});
 
   @override
-  _NumericValueInputState createState() => _NumericValueInputState(unit);
+  _NumericValueInputState createState() => _NumericValueInputState(count, unit);
 }
 
 class _NumericValueInputState extends State<NumericValueInput> {
   int count = 1;
   String unit = "";
 
-  _NumericValueInputState(this.unit);
+  _NumericValueInputState(this.count, this.unit);
 
   @override
   Widget build(BuildContext context) {

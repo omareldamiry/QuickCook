@@ -8,18 +8,23 @@ class AddIngredientsPage extends StatelessWidget {
   List<Ingredient>? ingredients;
   final Function? parentRefresh;
 
-  List<IngredientTile> ingredientsView = Ingredient.ingredientsList
-      .map((e) => IngredientTile(
-            key: UniqueKey(),
-            title: e.toString(),
-          ))
-      .toList();
-
   AddIngredientsPage({Key? key, this.parentRefresh, this.ingredients})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    List<IngredientTile> ingredientsView = Ingredient.ingredientsList
+        .map((e) => IngredientTile(
+              key: UniqueKey(),
+              title: e.name,
+              isChecked: ingredients!
+                          .indexWhere((element) => element.name == e.name) !=
+                      -1
+                  ? true
+                  : false,
+            ))
+        .toList();
+
     return Scaffold(
       appBar: myAppBar(title: "Add Ingredients"),
       body: SingleChildScrollView(
@@ -42,7 +47,7 @@ class AddIngredientsPage extends StatelessWidget {
           color: Colors.white,
         ),
         onPressed: () {
-          List<Ingredient> ingredientsList = ingredientValues();
+          List<Ingredient> ingredientsList = ingredientValues(ingredientsView);
           parentRefresh!(ingredientsList);
           Navigator.pop(context);
         },
@@ -50,7 +55,7 @@ class AddIngredientsPage extends StatelessWidget {
     );
   }
 
-  List<Ingredient> ingredientValues() {
+  List<Ingredient> ingredientValues(List<IngredientTile> ingredientsView) {
     List<Ingredient> values = [];
 
     ingredientsView.forEach((ingredientTile) {
@@ -64,11 +69,11 @@ class AddIngredientsPage extends StatelessWidget {
 
 // ignore: must_be_immutable
 class IngredientPicker extends StatefulWidget {
+  final Key key = new UniqueKey();
   final Function? parentRefresh;
   List<IngredientTile>? ingredientsView = [];
 
-  IngredientPicker({Key? key, this.parentRefresh, this.ingredientsView})
-      : super(key: key);
+  IngredientPicker({this.parentRefresh, this.ingredientsView});
 
   @override
   _IngredientPickerState createState() => _IngredientPickerState(
@@ -84,8 +89,6 @@ class _IngredientPickerState extends State<IngredientPicker> {
   List<IngredientTile>? ingredientsView;
 
   _IngredientPickerState({this.parentRefresh, this.ingredientsView});
-
-  List<bool> panelControl = [];
   @override
   Widget build(BuildContext context) {
     ingredientsList = [];
@@ -106,17 +109,10 @@ class _IngredientPickerState extends State<IngredientPicker> {
     );
   }
 
-  void expansionCallBack(int index, bool isExpand) {
-    setState(() {
-      panelControl[index] = !isExpand;
-    });
-  }
-
   List<Widget> expansionTileBuilder() {
     List<Widget> exTiles = [];
 
     IngredientType.values.forEach((type) {
-      panelControl.add(false);
       List<IngredientTile> temp = [];
 
       ingredientsView!.forEach((tile) {
@@ -162,6 +158,7 @@ class _IngredientPickerState extends State<IngredientPicker> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: TextFormField(
+        key: UniqueKey(),
         controller: search,
         decoration: InputDecoration(
             labelText: "Search", suffixIcon: Icon(Icons.search)),

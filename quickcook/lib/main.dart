@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:provider/provider.dart';
+import 'package:quickcook/models/Ingredient.dart';
 import 'package:quickcook/models/Recipe.dart';
 import 'package:quickcook/models/User.dart';
 import 'package:quickcook/models/favorite.dart';
@@ -103,9 +104,12 @@ class MyApp extends StatelessWidget {
           }
 
           if (settings.name == '/addingredients') {
+            Map<String, Object?> args =
+                settings.arguments! as Map<String, Object?>;
             return MaterialPageRoute(
                 builder: (context) => AddIngredientsPage(
-                      parentRefresh: settings.arguments! as Function,
+                      ingredients: args['ingredients']! as List<Ingredient>,
+                      parentRefresh: args['refresh']! as Function,
                     ));
           }
 
