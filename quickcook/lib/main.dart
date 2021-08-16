@@ -24,6 +24,7 @@ import 'package:quickcook/screens/LoginPage.dart';
 import 'package:quickcook/services/RatingDA.dart';
 import 'package:quickcook/services/RecipeDA.dart';
 import 'package:quickcook/services/UserDA.dart';
+import 'package:quickcook/services/storage_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +39,9 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider<AuthService>(
           create: (_) => AuthService(FirebaseAuth.instance),
+        ),
+        Provider<StorageService>(
+          create: (_) => StorageService(),
         ),
         Provider<UserDA>(
           create: (_) => UserDA(),

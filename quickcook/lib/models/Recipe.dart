@@ -7,7 +7,7 @@ class Recipe {
   final String recipeDesc;
   final int recipePrepTime;
   final int recipeCal;
-  final String recipeVidLink;
+  // final String recipeVidLink;
   final String recipePicLink;
   final List<Ingredient> recipeIngredients;
   final double recipeRating;
@@ -22,8 +22,8 @@ class Recipe {
     this.recipeDesc = "Perfectly cooked",
     this.recipePrepTime = 5,
     this.recipeCal = 20,
-    this.recipeVidLink = "https://youtu.be/dummylink",
-    this.recipePicLink = "https://youtu.be/dummylink",
+    // this.recipeVidLink = "https://youtu.be/dummylink",
+    this.recipePicLink = "/imgs/recipepics/default_recipepic.jpg",
     required this.recipeIngredients,
     this.recipeRating = 0.0,
     required this.recipeOwner,
@@ -40,6 +40,9 @@ class Recipe {
           // recipePrepTime: json['recipePrepTime']! as int,
           // recipeCal: json['recipeCal']! as int,
           // recipeVidLink: json['recipeVidLink']! as String,
+          recipePicLink: json['recipePicLink'] != null
+              ? json['recipePicLink']! as String
+              : "/imgs/recipepics/default_recipepic.jpg",
           recipeIngredients: Ingredient.fromJsonList(json['ingredients']!),
           recipeRating: json['rating']!.toDouble(),
           recipeOwner: json['recipeOwner']! as String,
@@ -54,7 +57,8 @@ class Recipe {
       'recipeDesc': recipeDesc,
       'recipePrepTime': recipePrepTime,
       'recipeCal': recipeCal,
-      'recipeVidLink': recipeVidLink,
+      // 'recipeVidLink': recipeVidLink,
+      'recipePicLink': recipePicLink,
       'ingredients': recipeIngredients.map((e) => e.toString()).toList(),
       'rating': recipeRating,
       'recipeOwner': recipeOwner,

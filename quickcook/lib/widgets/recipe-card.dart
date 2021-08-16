@@ -7,6 +7,7 @@ import 'package:quickcook/services/FavoriteDA.dart';
 import 'package:quickcook/services/RecipeDA.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/services/UserDA.dart';
+import 'package:quickcook/services/storage_service.dart';
 
 // ignore: must_be_immutable
 class RecipeCard extends StatefulWidget {
@@ -35,6 +36,8 @@ class _RecipeCardState extends State<RecipeCard> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    Future<String?> recipePicPath =
+        context.read<StorageService>().downloadURL(recipe.recipePicLink);
 
     return Container(
       margin: EdgeInsets.only(bottom: 40),
@@ -47,24 +50,37 @@ class _RecipeCardState extends State<RecipeCard> {
             onTap: () {
               Navigator.pushNamed(context, '/details', arguments: recipe.id);
             },
-            child: Container(
-              height: 200,
-              width: screenWidth * 0.8,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Colors.orange[200],
-                image: DecorationImage(
-                  alignment: FractionalOffset.center,
-                  fit: BoxFit.fitWidth,
-                  image: ResizeImage(
-                    NetworkImage(
-                      "https://cdn.vox-cdn.com/thumbor/ebLyPNyZghyiG1TCxQJ5vI-qxvU=/0x0:1280x853/1200x900/filters:focal(538x325:742x529)/cdn.vox-cdn.com/uploads/chorus_image/image/69482129/Aerial_Image__1_.0.jpg",
-                    ),
+            child: FutureBuilder<String?>(
+                future: recipePicPath,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                    return Container(
+                      height: 200,
+                      alignment: Alignment.center,
+                      width: screenWidth * 0.8,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: Colors.grey[200],
+                      ),
+                      child: CircularProgressIndicator(),
+                    );
+                  return Container(
                     height: 200,
-                  ), //? Placeholder
-                ),
-              ),
-            ),
+                    width: screenWidth * 0.8,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.orange[200],
+                      image: DecorationImage(
+                        alignment: FractionalOffset.center,
+                        fit: BoxFit.fitWidth,
+                        image: ResizeImage(
+                          NetworkImage(snapshot.data!),
+                          height: 200,
+                        ), //? Placeholder
+                      ),
+                    ),
+                  );
+                }),
           ),
           PopupMenuButton(
             icon: Container(

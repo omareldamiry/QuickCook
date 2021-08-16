@@ -1,9 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+// ignore: must_be_immutable
 class ImageUploadWidget extends StatefulWidget {
+  XFile? img;
+  Key key = new UniqueKey();
+
   ImageUploadWidget({
     Key? key,
   }) : super(key: key);
@@ -69,7 +71,9 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
   }
 
   void refresh() {
-    setState(() {});
+    setState(() {
+      widget.img = img;
+    });
   }
 
   Future<void> _chooseImgSource() async {
@@ -135,14 +139,20 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
                     )
                   ],
                 ),
-                onPressed: () {},
+                onPressed: () async {
+                  img = await _picker.pickImage(
+                    source: ImageSource.gallery,
+                  );
+
+                  Navigator.of(context).pop();
+
+                  refresh();
+                },
               ),
             ),
           ],
         ),
       ),
     );
-    // print(widget.foreignContext.widget);
-    // _picker.pickImage(source: ImageSource.gallery);
   }
 }

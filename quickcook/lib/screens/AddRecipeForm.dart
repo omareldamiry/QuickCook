@@ -4,6 +4,7 @@ import 'package:quickcook/models/Ingredient.dart';
 import 'package:quickcook/models/Recipe.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/services/RecipeDA.dart';
+import 'package:quickcook/services/storage_service.dart';
 import 'package:quickcook/widgets/appbar.dart';
 import 'package:quickcook/widgets/double-widget-container.dart';
 import 'package:quickcook/widgets/image-upload-widget.dart';
@@ -15,6 +16,7 @@ class AddRecipePage extends StatelessWidget {
   late final int prepTime;
   final NumericValueInput calWidget = NumericValueInput(unit: "Cal(s)");
   final NumericValueInput timeWidget = NumericValueInput(unit: "min(s)");
+  final ImageUploadWidget imageWidget = ImageUploadWidget();
   final List<Ingredient> ingredientsList = [];
   final IngredientInput ingredientInput = IngredientInput(
     ingredients: [],
@@ -77,7 +79,7 @@ class AddRecipePage extends StatelessWidget {
                         height: 20,
                       ),
                       DoubleWidgetContainer(
-                        widget1: ImageUploadWidget(),
+                        widget1: imageWidget,
                         widget2: TextFormField(
                           enabled: false,
                           maxLength: 50,
@@ -97,16 +99,25 @@ class AddRecipePage extends StatelessWidget {
           Icons.check,
           color: Colors.white,
         ),
-        onPressed: () {
+        onPressed: () async {
+          String filePath = imageWidget.img!.path;
+          String fileName = imageWidget.img!.name;
+          String dest = "/imgs/recipepics/";
+
           Recipe newRecipe = Recipe(
             recipeName: recipeName.value.text,
             recipeIngredients: ingredientInput.ingredients,
             recipeCal: calWidget.count,
             recipePrepTime: timeWidget.count,
             recipeOwner: FirebaseAuth.instance.currentUser!.email!,
+            recipePicLink: dest + imageWidget.img!.name,
           );
 
-          context.read<RecipeDA>().addRecipe(newRecipe);
+          await context
+              .read<StorageService>()
+              .uploadFile(filePath, fileName, dest);
+
+          await context.read<RecipeDA>().addRecipe(newRecipe);
           Navigator.pushReplacementNamed(context, '/myrecipes');
         },
       ),
@@ -169,6 +180,7 @@ class _IngredientInputState extends State<IngredientInput> {
   }
 }
 
+// ignore: must_be_immutable
 class NumericValueInput extends StatefulWidget {
   final String unit;
   final Key key = new UniqueKey();
