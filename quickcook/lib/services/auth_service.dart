@@ -35,4 +35,8 @@ class AuthService {
       return e.message;
     }
   }
+
+  Future<void> changePassword(String newPassword) async {
+    await _firebaseAuth.currentUser!.updatePassword(newPassword);
+  }
 }

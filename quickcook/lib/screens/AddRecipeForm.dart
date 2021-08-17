@@ -10,101 +10,123 @@ import 'package:quickcook/widgets/double-widget-container.dart';
 import 'package:quickcook/widgets/image-upload-widget.dart';
 
 // ignore: must_be_immutable
-class AddRecipePage extends StatelessWidget {
+class AddRecipePage extends StatefulWidget {
+  final Key key = UniqueKey();
   final String mode;
   final Recipe? recipe;
-  late final TextEditingController recipeName = TextEditingController();
-  late final TextEditingController recipeDesc = TextEditingController();
-  late final int calCount;
-  late final int prepTime;
-  late NumericValueInput calWidget;
-  late NumericValueInput timeWidget;
-  late final ImageUploadWidget imageWidget = ImageUploadWidget();
-  // late final List<Ingredient> ingredientsList;
-  late IngredientInput ingredientInput;
 
   AddRecipePage({this.mode = "add", this.recipe});
 
   @override
-  Widget build(BuildContext context) {
-    if (recipe != null) {
-      recipeName.text = recipe!.recipeName;
-      calWidget = NumericValueInput(count: recipe!.recipeCal, unit: "Cal(s)");
-      timeWidget =
-          NumericValueInput(count: recipe!.recipePrepTime, unit: "min(s)");
-      ingredientInput = IngredientInput(ingredients: recipe!.recipeIngredients);
+  _AddRecipePageState createState() => _AddRecipePageState();
+}
+
+class _AddRecipePageState extends State<AddRecipePage> {
+  TextEditingController recipeName = TextEditingController();
+  TextEditingController recipeDesc = TextEditingController();
+  // int? calCount;
+  // int? prepTime;
+  NumericValueInput? calWidget;
+  NumericValueInput? timeWidget;
+  ImageUploadWidget imageWidget = ImageUploadWidget();
+  IngredientInput? ingredientInput;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.recipe != null) {
+      recipeName.text = widget.recipe!.recipeName;
+      calWidget =
+          NumericValueInput(count: widget.recipe!.recipeCal, unit: "Cal(s)");
+      timeWidget = NumericValueInput(
+          count: widget.recipe!.recipePrepTime, unit: "min(s)");
+      ingredientInput =
+          IngredientInput(ingredients: widget.recipe!.recipeIngredients);
     } else {
       calWidget = NumericValueInput(unit: "Cal(s)");
       timeWidget = NumericValueInput(unit: "min(s)");
       ingredientInput = IngredientInput(ingredients: []);
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: myAppBar(title: mode == "add" ? "Add New Recipe" : "Edit Recipe"),
-      body: Form(
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Container(
-            padding: EdgeInsets.symmetric(
-                vertical: 20,
-                horizontal: MediaQuery.of(context).size.width * 0.1),
-            alignment: Alignment.center,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  mode == "add" ? "Add Recipe" : "Edit Recipe",
-                  style: TextStyle(
-                    fontSize: 27,
-                    fontWeight: FontWeight.bold,
+      appBar: myAppBar(
+          title: widget.mode == "add" ? "Add New Recipe" : "Edit Recipe"),
+      body: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Form(
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                  vertical: 20,
+                  horizontal: MediaQuery.of(context).size.width * 0.1),
+              alignment: Alignment.center,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    widget.mode == "add" ? "Add Recipe" : "Edit Recipe",
+                    style: TextStyle(
+                      fontSize: 27,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.left,
                   ),
-                  textAlign: TextAlign.left,
-                ),
-                // Form items go here
-                //
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 10, bottom: 0),
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  alignment: Alignment.center,
-                  child: Column(
-                    children: [
-                      DoubleWidgetContainer(
-                        widget1: TextFormField(
-                          controller: recipeName,
-                          maxLength: 50,
-                          decoration: InputDecoration(
-                            labelText: "Recipe Name",
+                  // Form items go here
+                  //
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 10, bottom: 0),
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    alignment: Alignment.center,
+                    child: Column(
+                      children: [
+                        DoubleWidgetContainer(
+                          widget1: TextFormField(
+                            controller: recipeName,
+                            maxLength: 50,
+                            decoration: InputDecoration(
+                              labelText: "Recipe Name",
+                            ),
                           ),
+                          widget2: ingredientInput,
+                          labels: ["", "Ingredients"],
                         ),
-                        widget2: ingredientInput,
-                        labels: ["", "Ingredients"],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      DoubleWidgetContainer(
-                        widget1: calWidget,
-                        widget2: timeWidget,
-                        labels: ["Calories", "Preparation Time"],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      DoubleWidgetContainer(
-                        widget1: imageWidget,
-                        widget2: TextFormField(
-                          enabled: false,
-                          maxLength: 50,
+                        SizedBox(
+                          height: 20,
                         ),
-                        labels: ["Recipe Picture", "Description"],
-                      ),
-                    ],
+                        DoubleWidgetContainer(
+                          widget1: calWidget,
+                          widget2: timeWidget,
+                          labels: ["Calories", "Preparation Time"],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        DoubleWidgetContainer(
+                          widget1: imageWidget,
+                          widget2: TextFormField(
+                            enabled: false,
+                            maxLength: 50,
+                          ),
+                          labels: ["Recipe Picture", "Description"],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -121,14 +143,14 @@ class AddRecipePage extends StatelessWidget {
 
           Recipe newRecipe = Recipe(
             recipeName: recipeName.value.text,
-            recipeIngredients: ingredientInput.ingredients,
-            recipeCal: calWidget.count,
-            recipePrepTime: timeWidget.count,
+            recipeIngredients: ingredientInput!.ingredients,
+            recipeCal: calWidget!.count,
+            recipePrepTime: timeWidget!.count,
             recipeOwner: FirebaseAuth.instance.currentUser!.email!,
             recipePicLink: dest + imageWidget.img!.name,
           );
 
-          if (mode == "add") {
+          if (widget.mode == "add") {
             await context
                 .read<StorageService>()
                 .uploadFile(filePath, fileName, dest);
@@ -138,6 +160,7 @@ class AddRecipePage extends StatelessWidget {
             // await context.read<RecipeDA>().editRecipe(newRecipe);
           }
 
+          Navigator.pop(context);
           Navigator.pushReplacementNamed(context, '/myrecipes');
         },
       ),
@@ -151,10 +174,6 @@ class IngredientInput extends StatefulWidget {
   List<Ingredient> ingredients;
 
   IngredientInput({required this.ingredients});
-
-  void newIngredients(List<Ingredient> _ingredients) {
-    ingredients = _ingredients;
-  }
 
   @override
   _IngredientInputState createState() =>
@@ -203,8 +222,13 @@ class _IngredientInputState extends State<IngredientInput> {
     setState(() {
       ingredients = _ingredients;
       // ingredientCount = _ingredients.length;
-      widget.newIngredients(_ingredients);
+      widget.ingredients = _ingredients;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
 

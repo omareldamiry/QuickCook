@@ -4,20 +4,30 @@ import 'package:quickcook/screens/SearchPage.dart';
 import 'package:quickcook/widgets/appbar.dart';
 
 // ignore: must_be_immutable
-class AddIngredientsPage extends StatelessWidget {
+class AddIngredientsPage extends StatefulWidget {
+  final Key key = UniqueKey();
   List<Ingredient>? ingredients;
   final Function? parentRefresh;
 
-  AddIngredientsPage({Key? key, this.parentRefresh, this.ingredients})
-      : super(key: key);
+  AddIngredientsPage({this.parentRefresh, this.ingredients});
 
   @override
-  Widget build(BuildContext context) {
-    List<IngredientTile> ingredientsView = Ingredient.ingredientsList
+  _AddIngredientsPageState createState() => _AddIngredientsPageState();
+}
+
+class _AddIngredientsPageState extends State<AddIngredientsPage> {
+  late List<IngredientTile> ingredientsView;
+  late IngredientPicker _ingredientPicker;
+
+  @override
+  void initState() {
+    super.initState();
+
+    ingredientsView = Ingredient.ingredientsList
         .map((e) => IngredientTile(
               key: UniqueKey(),
               title: e.name,
-              isChecked: ingredients!
+              isChecked: widget.ingredients!
                           .indexWhere((element) => element.name == e.name) !=
                       -1
                   ? true
@@ -25,19 +35,31 @@ class AddIngredientsPage extends StatelessWidget {
             ))
         .toList();
 
+    _ingredientPicker = IngredientPicker(
+      ingredientsView: ingredientsView,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: myAppBar(title: "Add Ingredients"),
-      body: SingleChildScrollView(
-        controller: ScrollController(),
-        child: Container(
-          alignment: Alignment.topCenter,
-          margin: EdgeInsets.only(
-              left: MediaQuery.of(context).size.width * 0.1,
-              right: MediaQuery.of(context).size.width * 0.1),
-          width: MediaQuery.of(context).size.width * 0.8,
-          child: IngredientPicker(
-            parentRefresh: parentRefresh!,
-            ingredientsView: ingredientsView,
+      body: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            alignment: Alignment.topCenter,
+            margin: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.1,
+                right: MediaQuery.of(context).size.width * 0.1),
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: _ingredientPicker,
           ),
         ),
       ),
@@ -48,7 +70,7 @@ class AddIngredientsPage extends StatelessWidget {
         ),
         onPressed: () {
           List<Ingredient> ingredientsList = ingredientValues(ingredientsView);
-          parentRefresh!(ingredientsList);
+          widget.parentRefresh!(ingredientsList);
           Navigator.pop(context);
         },
       ),
@@ -69,32 +91,39 @@ class AddIngredientsPage extends StatelessWidget {
 
 // ignore: must_be_immutable
 class IngredientPicker extends StatefulWidget {
-  final Key key = new UniqueKey();
-  final Function? parentRefresh;
+  final Key key = UniqueKey();
   List<IngredientTile>? ingredientsView = [];
 
-  IngredientPicker({this.parentRefresh, this.ingredientsView});
+  IngredientPicker({this.ingredientsView});
 
   @override
-  _IngredientPickerState createState() => _IngredientPickerState(
-      parentRefresh: parentRefresh!, ingredientsView: ingredientsView!);
+  _IngredientPickerState createState() =>
+      _IngredientPickerState(ingredientsView: ingredientsView!);
 }
 
 class _IngredientPickerState extends State<IngredientPicker> {
   List<Ingredient> ingredientsList = [];
   List<IngredientTile> picker = [];
-  TextEditingController search = TextEditingController();
-  Function? parentRefresh;
+  late final TextEditingController search;
+  late Widget searchBar;
 
   List<IngredientTile>? ingredientsView;
 
-  _IngredientPickerState({this.parentRefresh, this.ingredientsView});
+  _IngredientPickerState({this.ingredientsView});
+
+  @override
+  void initState() {
+    super.initState();
+    search = TextEditingController();
+    searchBar = ingredientSearchBar(staticKey: UniqueKey());
+  }
+
   @override
   Widget build(BuildContext context) {
     ingredientsList = [];
     return Column(
       children: <Widget>[
-            ingredientSearchBar(),
+            searchBar,
             SizedBox(
               height: 20,
             ),
@@ -154,14 +183,17 @@ class _IngredientPickerState extends State<IngredientPicker> {
     return exTiles;
   }
 
-  Widget ingredientSearchBar() {
+  Widget ingredientSearchBar({required Key staticKey}) {
+    print("searchbar");
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: TextFormField(
-        key: UniqueKey(),
+        key: staticKey,
         controller: search,
         decoration: InputDecoration(
-            labelText: "Search", suffixIcon: Icon(Icons.search)),
+          labelText: "Search",
+          suffixIcon: Icon(Icons.search),
+        ),
         onChanged: (value) {
           addSelected();
 
@@ -192,5 +224,10 @@ class _IngredientPickerState extends State<IngredientPicker> {
         ingredientsList.add(Ingredient.ingredients()[e.title]!);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

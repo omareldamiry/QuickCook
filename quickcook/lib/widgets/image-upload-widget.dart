@@ -5,10 +5,9 @@ import 'package:image_picker/image_picker.dart';
 class ImageUploadWidget extends StatefulWidget {
   XFile? img;
   Key key = new UniqueKey();
+  Widget? button;
 
-  ImageUploadWidget({
-    Key? key,
-  }) : super(key: key);
+  ImageUploadWidget({Key? key, this.button}) : super(key: key);
 
   @override
   _ImageUploadWidgetState createState() => _ImageUploadWidgetState();
@@ -22,52 +21,58 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        img == null
-            ? Text("No Image")
-            : Text(
-                "Image Uploaded",
-                style: TextStyle(color: Colors.green[400]),
-              ),
-        img == null
-            ? TextButton(
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 11),
-                  backgroundColor: Colors.orange[100],
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(50),
-                    ),
-                  ),
+    if (widget.button == null)
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          img == null
+              ? Text("No Image")
+              : Text(
+                  "Image Uploaded",
+                  style: TextStyle(color: Colors.green[400]),
                 ),
-                onPressed: _chooseImgSource,
-                child: Text("Upload Image"),
-              )
-            : ButtonBar(
-                buttonPadding: EdgeInsets.all(3),
-                children: [
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: _chooseImgSource,
-                    icon: Icon(Icons.edit, color: Colors.grey),
-                  ),
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      img = null;
-                      refresh();
-                    },
-                    icon: Icon(
-                      Icons.delete,
-                      color: Colors.red,
+          img == null
+              ? TextButton(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 11),
+                    backgroundColor: Colors.orange[100],
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(50),
+                      ),
                     ),
                   ),
-                ],
-              ),
-      ],
-    );
+                  onPressed: _chooseImgSource,
+                  child: Text("Upload Image"),
+                )
+              : ButtonBar(
+                  buttonPadding: EdgeInsets.all(3),
+                  children: [
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: _chooseImgSource,
+                      icon: Icon(Icons.edit, color: Colors.grey),
+                    ),
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        img = null;
+                        refresh();
+                      },
+                      icon: Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+        ],
+      );
+    else
+      return GestureDetector(
+        onTap: _chooseImgSource,
+        child: widget.button!,
+      );
   }
 
   void refresh() {
@@ -77,19 +82,12 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
   }
 
   Future<void> _chooseImgSource() async {
-    Scaffold.of(context).showBottomSheet(
-      (BuildContext context) => Container(
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) => Container(
         height: 110,
         decoration: BoxDecoration(
           color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Color(Colors.grey[200]!.value),
-              offset: Offset(0, -2),
-              spreadRadius: 3,
-              blurRadius: 3,
-            )
-          ],
         ),
         child: ButtonBar(
           alignment: MainAxisAlignment.spaceEvenly,

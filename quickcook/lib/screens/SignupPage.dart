@@ -12,7 +12,16 @@ class SignupPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SignupForm(),
+      body: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: SignupForm(),
+      ),
     );
   }
 }
@@ -164,11 +173,9 @@ class _SignupFormState extends State<SignupForm> {
 
                               await context.read<UserDA>().addUser(newUser);
 
-                              await context
-                                  .read<AuthService>()
-                                  .signUp(
-                                      email: emailController.text.trim(),
-                                      password: passwordController.text.trim());
+                              await context.read<AuthService>().signUp(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text.trim());
 
                               Navigator.pushReplacementNamed(context, '/');
                             }

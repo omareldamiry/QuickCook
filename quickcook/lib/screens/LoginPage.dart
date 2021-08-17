@@ -83,107 +83,116 @@ class _LoginFormState extends State<LoginForm> {
       return Center();
     }
 
-    return Center(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.symmetric(horizontal: 70),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Login",
-                      style: TextStyle(
-                        fontSize: 27,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextFormField(
-                      controller: emailController,
-                      style: TextStyle(fontSize: 15),
-                      decoration: InputDecoration(
-                        // border: OutlineInputBorder(
-                        //     borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                        labelText: "Email",
-                        labelStyle: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    TextFormField(
-                      controller: passwordController,
-                      obscureText: true,
-                      style: TextStyle(fontSize: 15),
-                      decoration: InputDecoration(
-                        // border: OutlineInputBorder(
-                        //     borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                        labelText: "Password",
-                        labelStyle: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    ElevatedButton(
-                      child: Text('Log in'),
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all(
-                          EdgeInsets.only(left: 100, right: 100),
-                        ),
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                      ),
-                      onPressed: () async {
-                        String? status = await context
-                            .read<AuthService>()
-                            .signIn(
-                                email: emailController.text.trim(),
-                                password: passwordController.text.trim())
-                            .then((value) => value);
+    return GestureDetector(
+      onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
 
-                        if (status == "Signed in") {
-                          // Navigator.pushReplacementNamed(context, '/');
-                        } else {
-                          // Signin failure implementation
-                          print("Sign in failed");
-                        }
-                      },
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text("Or"),
-                    TextButton(
-                      child: Text(
-                        'Sign up',
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+      child: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(horizontal: 70),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Login",
                         style: TextStyle(
-                            color: Colors.orange,
-                            decoration: TextDecoration.underline),
-                      ),
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all(
-                          EdgeInsets.only(left: 100, right: 100),
+                          fontSize: 27,
+                          fontWeight: FontWeight.bold,
                         ),
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.white),
                       ),
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SignupPage(),
-                            ));
-                      },
-                    ),
-                  ],
+                      TextFormField(
+                        controller: emailController,
+                        style: TextStyle(fontSize: 15),
+                        decoration: InputDecoration(
+                          // border: OutlineInputBorder(
+                          //     borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                          labelText: "Email",
+                          labelStyle: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                      TextFormField(
+                        controller: passwordController,
+                        obscureText: true,
+                        style: TextStyle(fontSize: 15),
+                        decoration: InputDecoration(
+                          // border: OutlineInputBorder(
+                          //     borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                          labelText: "Password",
+                          labelStyle: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      ElevatedButton(
+                        child: Text('Log in'),
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                            EdgeInsets.only(left: 100, right: 100),
+                          ),
+                          foregroundColor:
+                              MaterialStateProperty.all(Colors.white),
+                        ),
+                        onPressed: () async {
+                          String? status = await context
+                              .read<AuthService>()
+                              .signIn(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text.trim())
+                              .then((value) => value);
+    
+                          if (status == "Signed in") {
+                            // Navigator.pushReplacementNamed(context, '/');
+                          } else {
+                            // Signin failure implementation
+                            print("Sign in failed");
+                          }
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text("Or"),
+                      TextButton(
+                        child: Text(
+                          'Sign up',
+                          style: TextStyle(
+                              color: Colors.orange,
+                              decoration: TextDecoration.underline),
+                        ),
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                            EdgeInsets.only(left: 100, right: 100),
+                          ),
+                          foregroundColor:
+                              MaterialStateProperty.all(Colors.white),
+                        ),
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SignupPage(),
+                              ));
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            // Spacer(),
-          ],
+              // Spacer(),
+            ],
+          ),
         ),
       ),
     );
