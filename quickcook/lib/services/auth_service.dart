@@ -36,7 +36,20 @@ class AuthService {
     }
   }
 
-  Future<void> changePassword(String newPassword) async {
-    await _firebaseAuth.currentUser!.updatePassword(newPassword);
+  Future<void> changePassword(String oldPassword, String newPassword) async {
+    AuthCredential credential = EmailAuthProvider.credential(
+      email: FirebaseAuth.instance.currentUser!.email!,
+      password: oldPassword,
+    );
+
+// Reauthenticate
+    try {
+      await FirebaseAuth.instance.currentUser!
+          .reauthenticateWithCredential(credential);
+
+      await _firebaseAuth.currentUser!.updatePassword(newPassword);
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+    }
   }
 }

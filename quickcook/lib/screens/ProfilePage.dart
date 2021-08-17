@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:quickcook/models/User.dart';
+import 'package:quickcook/services/auth_service.dart';
 import 'package:quickcook/services/storage_service.dart';
 import 'package:quickcook/utilities/custom-snackbar.dart';
 import 'package:quickcook/widgets/appbar.dart';
@@ -28,6 +30,10 @@ class _ProfilePageState extends State<ProfilePage> {
       size: 50,
     ),
   );
+
+  TextEditingController _oldPass = TextEditingController();
+  TextEditingController _newPass = TextEditingController();
+  TextEditingController _newPassConfirm = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +157,63 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   onPressed: () async {
-                    customSnackBar(context, "Your password has been changed!");
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text("Change Password"),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextField(
+                                controller: _oldPass,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  labelText: "Old Password",
+                                ),
+                              ),
+                              TextField(
+                                controller: _newPass,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  labelText: "New Password",
+                                ),
+                              ),
+                              TextField(
+                                controller: _newPassConfirm,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  labelText: "Confirm New Password",
+                                ),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text("Cancel"),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                if (_newPass.text.isNotEmpty &&
+                                    _newPass.text == _newPassConfirm.text) {
+                                  await context
+                                      .read<AuthService>()
+                                      .changePassword(
+                                          _oldPass.text, _newPass.text);
+                                  Navigator.pop(context);
+                                  customSnackBar(context,
+                                      "Your password has been changed!");
+                                } else {}
+                              },
+                              child: Text("Confirm"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                   child: Text(
                     "Change Password",
