@@ -142,6 +142,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
           String dest = "/imgs/recipepics/";
 
           Recipe newRecipe = Recipe(
+            id: widget.recipe != null ? widget.recipe!.id : "",
             recipeName: recipeName.value.text,
             recipeIngredients: ingredientInput!.ingredients,
             recipeCal: calWidget!.count,
@@ -157,7 +158,10 @@ class _AddRecipePageState extends State<AddRecipePage> {
             await context.read<RecipeDA>().addRecipe(newRecipe);
           } else {
             print(newRecipe.toJson());
-            // await context.read<RecipeDA>().editRecipe(newRecipe);
+            await context
+                .read<StorageService>()
+                .uploadFile(filePath, fileName, dest);
+            await context.read<RecipeDA>().editRecipe(newRecipe);
           }
 
           Navigator.pop(context);
