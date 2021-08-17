@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quickcook/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/screens/SignupPage.dart';
+import 'package:quickcook/utilities/custom-snackbar.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -85,12 +86,12 @@ class _LoginFormState extends State<LoginForm> {
 
     return GestureDetector(
       onTap: () {
-          FocusScopeNode currentFocus = FocusScope.of(context);
+        FocusScopeNode currentFocus = FocusScope.of(context);
 
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
-        },
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
       child: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -150,13 +151,14 @@ class _LoginFormState extends State<LoginForm> {
                               .signIn(
                                   email: emailController.text.trim(),
                                   password: passwordController.text.trim())
-                              .then((value) => value);
-    
+                              .then((value) => value)
+                              .catchError((err) => err);
+
                           if (status == "Signed in") {
                             // Navigator.pushReplacementNamed(context, '/');
                           } else {
                             // Signin failure implementation
-                            print("Sign in failed");
+                            customSnackBar(context, status!);
                           }
                         },
                       ),
@@ -172,9 +174,6 @@ class _LoginFormState extends State<LoginForm> {
                               decoration: TextDecoration.underline),
                         ),
                         style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                            EdgeInsets.only(left: 100, right: 100),
-                          ),
                           foregroundColor:
                               MaterialStateProperty.all(Colors.white),
                         ),

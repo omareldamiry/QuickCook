@@ -4,6 +4,7 @@ import 'package:quickcook/models/Rating.dart';
 import 'package:quickcook/models/Recipe.dart';
 import 'package:quickcook/models/User.dart';
 import 'package:quickcook/models/favorite.dart';
+import 'package:quickcook/utilities/current-user.dart';
 
 //  RecipeDA
 // *(aka. db_service 2.0)*
@@ -85,10 +86,7 @@ class RecipeDA {
   }
 
   Stream<QuerySnapshot<Recipe>> getMyRecipes() {
-    String? user = FirebaseAuth.instance.currentUser!.email;
-    Query<Recipe> recipes = recipesRef.where("recipeOwner", isEqualTo: user);
-
-    return recipes.snapshots();
+    return recipesRef.where('recipeOwner', isEqualTo: user!.email).snapshots();
   }
 
   Future<void>? editRecipe(Recipe recipe) async {

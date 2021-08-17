@@ -26,6 +26,7 @@ import 'package:quickcook/services/RatingDA.dart';
 import 'package:quickcook/services/RecipeDA.dart';
 import 'package:quickcook/services/UserDA.dart';
 import 'package:quickcook/services/storage_service.dart';
+import 'package:quickcook/utilities/current-user.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -152,9 +153,24 @@ class AuthWrapper extends StatelessWidget {
     final User? firebaseUser = context.watch<User?>();
 
     if (firebaseUser != null) {
-      return HomePage(
-        ingredientQuery: ingredientQuery,
-      );
+      return FutureBuilder<UserData>(
+          future: UserData.currentUser(FirebaseAuth.instance.currentUser!.uid),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (user == null) {
+                user = snapshot.data!;
+              }
+
+              return HomePage(
+                ingredientQuery: ingredientQuery,
+              );
+            }
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          });
     }
 
     return LoginPage();

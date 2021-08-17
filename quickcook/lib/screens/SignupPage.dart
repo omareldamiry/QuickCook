@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:quickcook/services/auth_service.dart';
@@ -5,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:quickcook/models/User.dart';
 import 'package:quickcook/screens/LoginPage.dart';
 import 'package:quickcook/services/UserDA.dart';
+import 'package:quickcook/utilities/custom-snackbar.dart';
 
 class SignupPage extends StatelessWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -145,10 +147,10 @@ class _SignupFormState extends State<SignupForm> {
                       obscureText: true,
                       style: TextStyle(fontSize: 15),
                       decoration: InputDecoration(
-                        // border: OutlineInputBorder(
-                        //     borderRadius: BorderRadius.all(Radius.circular(10.0))),
                         labelText: "Confirm Password",
-                        labelStyle: TextStyle(fontSize: 15),
+                        labelStyle: TextStyle(
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                     SizedBox(
@@ -165,17 +167,26 @@ class _SignupFormState extends State<SignupForm> {
                       ),
                       onPressed: _isPasswordMatching
                           ? () async {
+                              String? status = await context
+                                  .read<AuthService>()
+                                  .signUp(
+                                      email: emailController.text.trim(),
+                                      password: passwordController.text.trim())
+                                  .catchError((err) => err);
+
+                              customSnackBar(context, status!);
+
                               UserData newUser = UserData(
+                                id: FirebaseAuth.instance.currentUser!.uid,
                                 email: emailController.text.trim(),
                                 firstName: fNameController.text.trim(),
                                 lastName: lNameController.text.trim(),
                               );
 
-                              await context.read<UserDA>().addUser(newUser);
-
-                              await context.read<AuthService>().signUp(
-                                  email: emailController.text.trim(),
-                                  password: passwordController.text.trim());
+                              await context
+                                  .read<UserDA>()
+                                  .addUser(newUser)
+                                  .catchError((err) => err);
 
                               Navigator.pushReplacementNamed(context, '/');
                             }
@@ -193,9 +204,6 @@ class _SignupFormState extends State<SignupForm> {
                             decoration: TextDecoration.underline),
                       ),
                       style: ButtonStyle(
-                        padding: MaterialStateProperty.all(
-                          EdgeInsets.only(left: 100, right: 100),
-                        ),
                         foregroundColor:
                             MaterialStateProperty.all(Colors.white),
                       ),

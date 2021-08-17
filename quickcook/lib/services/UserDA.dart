@@ -13,16 +13,15 @@ class UserDA {
           );
 
   Future<void> addUser(UserData userData) async {
-    await usersRef.add(userData);
+    try {
+      await usersRef.doc(userData.id).set(userData);
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+    }
   }
 
-  Future<UserData> getUser(String email) async {
-    List<QueryDocumentSnapshot<UserData>> users = await usersRef
-        .where('email', isEqualTo: email)
-        .get()
-        .then((snapshot) => snapshot.docs);
-
-    return users.first.data();
+  Future<UserData> getUser(String id) async {
+    return await usersRef.doc(id).get().then((value) => value.data()!);
   }
 
   Future<void> updateUserProfile(UserData userData) async {

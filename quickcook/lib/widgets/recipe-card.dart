@@ -8,6 +8,7 @@ import 'package:quickcook/services/RecipeDA.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/services/UserDA.dart';
 import 'package:quickcook/services/storage_service.dart';
+import 'package:quickcook/utilities/current-user.dart';
 
 // ignore: must_be_immutable
 class RecipeCard extends StatefulWidget {
@@ -15,23 +16,27 @@ class RecipeCard extends StatefulWidget {
   bool isFavorite;
 
   final Function? parentRefresh;
+  final Function? favoriteRefresh;
 
   RecipeCard({
     Key? key,
     required this.recipe,
     this.parentRefresh,
+    this.favoriteRefresh,
     this.isFavorite = false,
   });
 
   @override
-  _RecipeCardState createState() => _RecipeCardState(recipe, parentRefresh);
+  _RecipeCardState createState() =>
+      _RecipeCardState(recipe, parentRefresh, favoriteRefresh);
 }
 
 class _RecipeCardState extends State<RecipeCard> {
   final Recipe recipe;
   final Function? parentRefresh;
+  final Function? favoriteRefresh;
 
-  _RecipeCardState(this.recipe, this.parentRefresh);
+  _RecipeCardState(this.recipe, this.parentRefresh, this.favoriteRefresh);
 
   @override
   Widget build(BuildContext context) {
@@ -100,9 +105,8 @@ class _RecipeCardState extends State<RecipeCard> {
               ),
             ),
             itemBuilder: (context) {
-              if (FirebaseAuth.instance.currentUser!.email!
-                      .compareTo(recipe.recipeOwner) !=
-                  0) {
+              if (user!.email.compareTo(recipe.recipeOwner) != 0 &&
+                  !user!.isAdmin) {
                 return !super.widget.isFavorite
                     ? <PopupMenuEntry<String>>[
                         const PopupMenuItem(
@@ -116,20 +120,20 @@ class _RecipeCardState extends State<RecipeCard> {
                           value: "Unfavorite",
                         ),
                       ];
-              }
-              return <PopupMenuEntry<String>>[
-                const PopupMenuItem(
-                  value: "Edit",
-                  child: Text("Edit"),
-                ),
-                const PopupMenuItem(
-                  value: "Delete",
-                  child: Text(
-                    "Delete",
-                    style: TextStyle(color: Colors.red),
+              } else
+                return <PopupMenuEntry<String>>[
+                  const PopupMenuItem(
+                    value: "Edit",
+                    child: Text("Edit"),
                   ),
-                ),
-              ];
+                  const PopupMenuItem(
+                    value: "Delete",
+                    child: Text(
+                      "Delete",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ];
             },
             onSelected: (String value) async {
               if (value.compareTo("Edit") == 0) {
@@ -146,7 +150,7 @@ class _RecipeCardState extends State<RecipeCard> {
               } else if (value.compareTo("Favorite") == 0) {
                 UserData user = await context
                     .read<UserDA>()
-                    .getUser(FirebaseAuth.instance.currentUser!.email!);
+                    .getUser(FirebaseAuth.instance.currentUser!.uid);
                 Favorite favorite =
                     Favorite(userID: user.id, recipeID: recipe.id);
                 await context.read<FavoriteDA>().addToFavorites(favorite);
@@ -156,7 +160,7 @@ class _RecipeCardState extends State<RecipeCard> {
               } else if (value.compareTo("Unfavorite") == 0) {
                 UserData user = await context
                     .read<UserDA>()
-                    .getUser(FirebaseAuth.instance.currentUser!.email!);
+                    .getUser(FirebaseAuth.instance.currentUser!.uid);
 
                 Favorite favorite = await context
                     .read<FavoriteDA>()
@@ -165,7 +169,7 @@ class _RecipeCardState extends State<RecipeCard> {
                 await context.read<FavoriteDA>().deleteFavorite(favorite.id);
 
                 setState(() {
-                  parentRefresh!(favorite);
+                  if (favoriteRefresh != null) favoriteRefresh!(favorite);
                   super.widget.isFavorite = false;
                 });
               }

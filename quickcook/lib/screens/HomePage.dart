@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quickcook/services/auth_service.dart';
+import 'package:quickcook/utilities/current-user.dart';
 import 'package:quickcook/widgets/appbar.dart';
 import 'package:quickcook/widgets/drawer.dart';
 import 'package:provider/provider.dart';
@@ -20,18 +21,20 @@ class HomePage extends StatelessWidget {
       ingredientQuery = null;
     return Scaffold(
       appBar: myAppBar(
-        title: "QuickCook",
+        title: !user!.isAdmin ? "QuickCook" : "QuickCook - Admin",
         actions: [
           IconButton(
             icon: Icon(Icons.exit_to_app_rounded),
             color: Colors.white,
-            onPressed: () {
-              context.read<AuthService>().signOut();
+            onPressed: () async {
+              await context.read<AuthService>().signOut();
             },
           ),
         ],
       ),
-      drawer: MyDrawer(currentRoute: '/',),
+      drawer: MyDrawer(
+        currentRoute: '/',
+      ),
       body: RecipeList(ingredientsQuery: ingredientQuery),
       floatingActionButton: FloatingActionButton(
           child: Icon(

@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quickcook/utilities/current-user.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth;
@@ -9,6 +10,7 @@ class AuthService {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
+    user = null;
   }
 
   Future<String?> signIn(
@@ -19,7 +21,13 @@ class AuthService {
 
       return "Signed in";
     } on FirebaseAuthException catch (e) {
-      return e.message;
+      if (e.code == 'wrong-password') {
+        return 'Incorrect password. Please try again';
+      } else if (e.code == 'user-not-found') {
+        return 'Incorrect email address. Please try again';
+      }
+
+      return e.code;
     }
   }
 
@@ -29,7 +37,7 @@ class AuthService {
       await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
 
-      return "Signed up";
+      return "Signed up successfully";
     } on FirebaseAuthException catch (e) {
       print("Sign Up Failed");
       return e.message;
@@ -56,6 +64,7 @@ class AuthService {
   Future<void> deleteUser() async {
     try {
       await FirebaseAuth.instance.currentUser!.delete();
+      user = null;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
         print(

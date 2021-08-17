@@ -137,10 +137,23 @@ class _AddRecipePageState extends State<AddRecipePage> {
           color: Colors.white,
         ),
         onPressed: () async {
-          String filePath = imageWidget.img!.path;
-          String fileName = imageWidget.img!.name;
+          String filePath = "";
+          String fileName = "";
+          if (imageWidget.img != null) {
+            filePath = imageWidget.img!.path;
+            fileName = imageWidget.img!.name;
+          }
           String dest = "/imgs/recipepics/";
 
+          String newRecipePicLink;
+
+          if (imageWidget.img != null) {
+            newRecipePicLink = dest + imageWidget.img!.name;
+          } else if (widget.recipe != null) {
+            newRecipePicLink = widget.recipe!.recipePicLink;
+          } else {
+            newRecipePicLink = "/imgs/recipepics/default_recipepic.jpg";
+          }
           Recipe newRecipe = Recipe(
             id: widget.recipe != null ? widget.recipe!.id : "",
             recipeName: recipeName.value.text,
@@ -148,19 +161,22 @@ class _AddRecipePageState extends State<AddRecipePage> {
             recipeCal: calWidget!.count,
             recipePrepTime: timeWidget!.count,
             recipeOwner: FirebaseAuth.instance.currentUser!.email!,
-            recipePicLink: dest + imageWidget.img!.name,
+            recipePicLink: newRecipePicLink,
           );
 
           if (widget.mode == "add") {
-            await context
-                .read<StorageService>()
-                .uploadFile(filePath, fileName, dest);
+            if (newRecipePicLink != "/imgs/recipepics/default_recipepic.jpg")
+              await context
+                  .read<StorageService>()
+                  .uploadFile(filePath, fileName, dest);
             await context.read<RecipeDA>().addRecipe(newRecipe);
           } else {
             print(newRecipe.toJson());
-            await context
-                .read<StorageService>()
-                .uploadFile(filePath, fileName, dest);
+            if (imageWidget.img != null &&
+                newRecipePicLink != "/imgs/recipepics/default_recipepic.jpg")
+              await context
+                  .read<StorageService>()
+                  .uploadFile(filePath, fileName, dest);
             await context.read<RecipeDA>().editRecipe(newRecipe);
           }
 

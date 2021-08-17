@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:quickcook/models/User.dart';
@@ -100,11 +99,18 @@ class _ProfilePageState extends State<ProfilePage> {
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.orange, width: 3),
                       image: DecorationImage(
-                        image: ResizeImage(
-                          NetworkImage(
-                              "https://image.flaticon.com/icons/png/512/847/847969.png"),
-                          width: 117,
-                        ),
+                        image: _picker.img == null
+                            ? ResizeImage(
+                                NetworkImage(
+                                    "https://image.flaticon.com/icons/png/512/847/847969.png"),
+                                width: 117,
+                              )
+                            : ResizeImage(
+                                FileImage(
+                                  File(_picker.img!.path),
+                                ),
+                                width: 117,
+                              ),
                       ),
                     ),
                     child: _mode == "edit" ? _picker : null,
@@ -207,7 +213,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Navigator.pop(context);
                                   customSnackBar(context,
                                       "Your password has been changed!");
-                                } else {}
+                                } else {
+                                  customSnackBar(context,
+                                      "Invalid input(s). Please try again");
+                                }
                               },
                               child: Text("Confirm"),
                             ),
@@ -351,7 +360,26 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   onPressed: () async {
                     img = _picker.img;
-                    print(img!.path);
+
+                    if (img != null) {
+                      String filePath = img!.path;
+                      String fileName = img!.name;
+                      String dest = "/imgs/recipepics/";
+
+                      await context
+                          .read<StorageService>()
+                          .uploadFile(filePath, fileName, dest);
+
+                      UserData newUserData = UserData(
+                        id: widget.user.id,
+                        email: widget.user.email,
+                        firstName: widget.user.firstName,
+                        lastName: widget.user.lastName,
+                        profilePic: dest + fileName,
+                      );
+
+                      context.read<UserDA>().updateUserProfile(newUserData);
+                    }
 
                     customSnackBar(context, "Profile updated!");
                     setState(() {

@@ -25,9 +25,13 @@ class _RecipeListState extends State<RecipeList> {
     return Container(
       child: FutureBuilder<QuerySnapshot<Recipe>>(
         future: context.read<RecipeDA>().getRecipes(query: ingredientsQuery),
-        builder: recipeListBuilder(),
+        builder: recipeListBuilder(refresh: refresh),
       ),
     );
+  }
+
+  void refresh() {
+    setState(() {});
   }
 }
 

@@ -7,6 +7,7 @@ import 'package:quickcook/services/RatingDA.dart';
 import 'package:quickcook/services/RecipeDA.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:quickcook/services/storage_service.dart';
+import 'package:quickcook/utilities/current-user.dart';
 import 'package:quickcook/widgets/appbar.dart';
 
 class RecipeDetailsPage extends StatelessWidget {
@@ -160,67 +161,74 @@ class RecipeDetails extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          TextButton(
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (context) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
-                    height: 150,
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      children: [
-                        RatingBar.builder(
-                          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                          itemBuilder: (context, _) => Icon(
-                            Icons.star,
-                            color: Colors.amber,
+          !user!.isAdmin
+              ? TextButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
                           ),
-                          onRatingUpdate: (value) async {
-                            Rating rating = Rating(
-                              recipeID: _recipe.id,
-                              userID: FirebaseAuth.instance.currentUser!.email,
-                              ratingValue: value,
-                            );
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 50),
+                          height: 150,
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                            children: [
+                              RatingBar.builder(
+                                itemPadding:
+                                    EdgeInsets.symmetric(horizontal: 4.0),
+                                itemBuilder: (context, _) => Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                ),
+                                onRatingUpdate: (value) async {
+                                  Rating rating = Rating(
+                                    recipeID: _recipe.id,
+                                    userID: FirebaseAuth
+                                        .instance.currentUser!.email,
+                                    ratingValue: value,
+                                  );
 
-                            await context.read<RatingDA>().addRating(rating);
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          "Please rate recipe",
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
+                                  await context
+                                      .read<RatingDA>()
+                                      .addRating(rating);
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                "Please rate recipe",
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              // TextField(
+                              //   decoration: InputDecoration(
+                              //     labelText: "Feedback (optional)",
+                              //     border: OutlineInputBorder(
+                              //       borderRadius: BorderRadius.all(
+                              //         Radius.circular(10),
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                            ],
                           ),
-                        ),
-                        // TextField(
-                        //   decoration: InputDecoration(
-                        //     labelText: "Feedback (optional)",
-                        //     border: OutlineInputBorder(
-                        //       borderRadius: BorderRadius.all(
-                        //         Radius.circular(10),
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
-                      ],
-                    ),
-                  );
-                },
-                backgroundColor: Colors.white,
-                elevation: 10,
-              );
-            },
-            child: Text("Rate Recipe"),
-          ),
+                        );
+                      },
+                      backgroundColor: Colors.white,
+                      elevation: 10,
+                    );
+                  },
+                  child: Text("Rate Recipe"),
+                )
+              : SizedBox(),
         ],
       ),
     );

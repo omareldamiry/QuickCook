@@ -21,7 +21,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: myAppBar(title: "Favorites"),
-      drawer: MyDrawer(currentRoute: '/favorites',),
+      drawer: MyDrawer(
+        currentRoute: '/favorites',
+      ),
       body: Container(
         alignment: Alignment.center,
         child: FutureBuilder<List<Recipe>>(
@@ -47,7 +49,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     key: Key(snapshot.data![index].id),
                     recipe: snapshot.data![index],
                     isFavorite: true,
-                    parentRefresh: refresh,
+                    favoriteRefresh: refresh,
                   );
                 },
               );

@@ -6,6 +6,7 @@ import 'package:quickcook/services/FavoriteDA.dart';
 import 'package:quickcook/services/auth_service.dart';
 import 'package:quickcook/models/User.dart';
 import 'package:quickcook/services/UserDA.dart';
+import 'package:quickcook/utilities/current-user.dart';
 
 // TODO: Refactor navigation logic into a single _navigate() function
 
@@ -45,44 +46,48 @@ class MyDrawer extends StatelessWidget {
               thickness: 1,
               height: 0,
             ),
-            ListTile(
-              title: Text("My Recipes"),
-              onTap: () {
-                Navigator.pop(context);
-                if (currentRoute == '/myrecipes') {
-                } else if (currentRoute == '/') {
-                  Navigator.pushNamed(context, '/myrecipes');
-                } else {
-                  Navigator.pushReplacementNamed(context, '/myrecipes');
-                }
-              },
-            ),
+            user!.isAdmin
+                ? ListTile(
+                    title: Text("My Recipes"),
+                    onTap: () {
+                      Navigator.pop(context);
+                      if (currentRoute == '/myrecipes') {
+                      } else if (currentRoute == '/') {
+                        Navigator.pushNamed(context, '/myrecipes');
+                      } else {
+                        Navigator.pushReplacementNamed(context, '/myrecipes');
+                      }
+                    },
+                  )
+                : SizedBox(),
             Divider(
               thickness: 1,
               height: 0,
             ),
-            ListTile(
-              title: Text("Favorites"),
-              onTap: () async {
-                UserData currentUser = await context
-                    .read<UserDA>()
-                    .getUser(FirebaseAuth.instance.currentUser!.email!);
+            !user!.isAdmin
+                ? ListTile(
+                    title: Text("Favorites"),
+                    onTap: () async {
+                      UserData currentUser = await context
+                          .read<UserDA>()
+                          .getUser(FirebaseAuth.instance.currentUser!.uid);
 
-                List<Favorite> favorites = await context
-                    .read<FavoriteDA>()
-                    .getFavorites(currentUser.id);
+                      List<Favorite> favorites = await context
+                          .read<FavoriteDA>()
+                          .getFavorites(currentUser.id);
 
-                Navigator.pop(context);
-                if (currentRoute == '/favorites') {
-                } else if (currentRoute == '/') {
-                  Navigator.pushNamed(context, '/favorites',
-                      arguments: favorites);
-                } else {
-                  Navigator.pushReplacementNamed(context, '/favorites',
-                      arguments: favorites);
-                }
-              },
-            ),
+                      Navigator.pop(context);
+                      if (currentRoute == '/favorites') {
+                      } else if (currentRoute == '/') {
+                        Navigator.pushNamed(context, '/favorites',
+                            arguments: favorites);
+                      } else {
+                        Navigator.pushReplacementNamed(context, '/favorites',
+                            arguments: favorites);
+                      }
+                    },
+                  )
+                : SizedBox(),
             Divider(
               thickness: 1,
               height: 0,
@@ -92,7 +97,7 @@ class MyDrawer extends StatelessWidget {
               onTap: () async {
                 UserData currentUser = await context
                     .read<UserDA>()
-                    .getUser(FirebaseAuth.instance.currentUser!.email!);
+                    .getUser(FirebaseAuth.instance.currentUser!.uid);
 
                 Navigator.pop(context);
                 if (currentRoute == '/profile') {
