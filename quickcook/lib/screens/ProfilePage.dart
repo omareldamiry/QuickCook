@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:quickcook/models/User.dart';
+import 'package:quickcook/services/UserDA.dart';
 import 'package:quickcook/services/auth_service.dart';
 import 'package:quickcook/services/storage_service.dart';
 import 'package:quickcook/utilities/custom-snackbar.dart';
@@ -272,7 +273,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                        await context
+                            .read<UserDA>()
+                            .deleteProfile(widget.user.email);
+                        await context.read<AuthService>().deleteUser();
+                        Navigator.pushNamed(context, '/');
+                      },
                       child: Text(
                         'Delete Account',
                         style: TextStyle(color: Colors.red[400]),
@@ -291,7 +298,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                        await context.read<AuthService>().signOut();
+                        Navigator.pushNamed(context, '/');
+                      },
                       child: Text(
                         'Log out',
                         style: TextStyle(color: Colors.black),

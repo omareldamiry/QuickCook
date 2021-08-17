@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quickcook/models/User.dart';
 
 class UserDA {
@@ -28,10 +29,14 @@ class UserDA {
     await usersRef.doc(userData.id).update(userData.toJson());
   }
 
-  Future<void> addToFavorites(String email, String recipeID) async {
-    // await usersRef
-    //     .where('email', isEqualTo: email)
-    //     .get()
-    //     .then((snapshot) => snapshot.docs.first.reference.update(data));
+  Future<void> deleteProfile(String email) async {
+    try {
+      await usersRef
+          .where('email', isEqualTo: email)
+          .get()
+          .then((snapshot) => snapshot.docs.first.reference.delete());
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+    }
   }
 }
