@@ -49,16 +49,16 @@ class _RecipeCardState extends State<RecipeCard> {
 
     if (recipe.recipePrepTime <= 5) {
       timeColor = Colors.green;
-      timeBackgroundColor = Colors.green[200];
+      timeBackgroundColor = Colors.green[100];
     } else if (recipe.recipePrepTime <= 10) {
-      timeColor = Colors.yellow;
-      timeBackgroundColor = Colors.yellow[200];
+      timeColor = Colors.orange[300];
+      timeBackgroundColor = Colors.yellow[100];
     } else if (recipe.recipePrepTime <= 20) {
       timeColor = Colors.orange;
-      timeBackgroundColor = Colors.orange[200];
+      timeBackgroundColor = Colors.orange[100];
     } else {
       timeColor = Colors.red;
-      timeBackgroundColor = Colors.red[200];
+      timeBackgroundColor = Colors.red[100];
     }
 
     return Container(

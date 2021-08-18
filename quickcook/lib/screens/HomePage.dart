@@ -42,9 +42,9 @@ class HomePage extends StatelessWidget {
             color: Colors.white,
           ),
           onPressed: () {
-            Navigator.push(
+            Navigator.pushNamed(
               context,
-              MaterialPageRoute(builder: (context) => SearchPage()),
+              '/search'
             );
           }),
     );

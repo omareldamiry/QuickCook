@@ -91,10 +91,10 @@ class _AddIngredientsPageState extends State<AddIngredientsPage> {
 
 // ignore: must_be_immutable
 class IngredientPicker extends StatefulWidget {
-  final Key key = UniqueKey();
+  final Key? key;
   List<IngredientTile>? ingredientsView = [];
 
-  IngredientPicker({this.ingredientsView});
+  IngredientPicker({this.key, this.ingredientsView});
 
   @override
   _IngredientPickerState createState() =>

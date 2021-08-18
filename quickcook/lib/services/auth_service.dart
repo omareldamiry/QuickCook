@@ -25,6 +25,8 @@ class AuthService {
         return 'Incorrect password. Please try again';
       } else if (e.code == 'user-not-found') {
         return 'Incorrect email address. Please try again';
+      } else if (e.code == "invalid-email") {
+        return 'Invalid email address';
       }
 
       return e.code;
@@ -40,7 +42,7 @@ class AuthService {
       return "Signed up successfully";
     } on FirebaseAuthException catch (e) {
       print("Sign Up Failed");
-      return e.message;
+      return e.code;
     }
   }
 

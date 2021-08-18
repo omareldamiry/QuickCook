@@ -155,10 +155,15 @@ class _LoginFormState extends State<LoginForm> {
                               .catchError((err) => err);
 
                           if (status == "Signed in") {
-                            // Navigator.pushReplacementNamed(context, '/');
+                            Navigator.pushReplacementNamed(context, '/');
                           } else {
                             // Signin failure implementation
-                            customSnackBar(context, status!);
+                            if (emailController.text == "")
+                              customSnackBar(context, "Email is required");
+                            else if (passwordController.text == "") {
+                              customSnackBar(context, "Password is required");
+                            } else
+                              customSnackBar(context, status!);
                           }
                         },
                       ),

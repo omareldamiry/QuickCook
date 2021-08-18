@@ -68,7 +68,6 @@ class RecipeDetails extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 );
               }
-
               return Hero(
                 tag: '${_recipe.id}',
                 child: Container(

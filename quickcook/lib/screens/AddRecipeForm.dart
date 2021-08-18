@@ -162,6 +162,8 @@ class _AddRecipePageState extends State<AddRecipePage> {
             recipeDesc: recipeDesc.value.text,
             recipeIngredients: ingredientInput!.ingredients,
             recipeCal: calWidget!.count,
+            recipeRating:
+                widget.recipe != null ? widget.recipe!.recipeRating : 0.0,
             recipePrepTime: timeWidget!.count,
             recipeOwner: FirebaseAuth.instance.currentUser!.email!,
             recipePicLink: newRecipePicLink,

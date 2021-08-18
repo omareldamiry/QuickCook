@@ -37,10 +37,12 @@ class _SignupFormState extends State<SignupForm> {
   bool _initialized = false;
   bool _error = false;
   bool _isPasswordMatching = false;
-  final TextEditingController fNameController = TextEditingController();
-  final TextEditingController lNameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController _fNameController = TextEditingController();
+  final TextEditingController _lNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   static Key formKey = new UniqueKey();
 
   void initializeFlutterFire() async {
@@ -93,7 +95,7 @@ class _SignupFormState extends State<SignupForm> {
                       ),
                     ),
                     TextFormField(
-                      controller: fNameController,
+                      controller: _fNameController,
                       style: TextStyle(fontSize: 15),
                       decoration: InputDecoration(
                         // border: OutlineInputBorder(
@@ -103,7 +105,7 @@ class _SignupFormState extends State<SignupForm> {
                       ),
                     ),
                     TextFormField(
-                      controller: lNameController,
+                      controller: _lNameController,
                       style: TextStyle(fontSize: 15),
                       decoration: InputDecoration(
                         // border: OutlineInputBorder(
@@ -113,7 +115,7 @@ class _SignupFormState extends State<SignupForm> {
                       ),
                     ),
                     TextFormField(
-                      controller: emailController,
+                      controller: _emailController,
                       style: TextStyle(fontSize: 15),
                       decoration: InputDecoration(
                         // border: OutlineInputBorder(
@@ -123,7 +125,7 @@ class _SignupFormState extends State<SignupForm> {
                       ),
                     ),
                     TextFormField(
-                      controller: passwordController,
+                      controller: _passwordController,
                       obscureText: true,
                       style: TextStyle(fontSize: 15),
                       decoration: InputDecoration(
@@ -135,7 +137,7 @@ class _SignupFormState extends State<SignupForm> {
                     ),
                     TextFormField(
                       onChanged: (value) {
-                        if (value.compareTo(passwordController.text) == 0) {
+                        if (value.compareTo(_passwordController.text) == 0) {
                           setState(() {
                             _isPasswordMatching = true;
                           });
@@ -145,6 +147,7 @@ class _SignupFormState extends State<SignupForm> {
                           });
                       },
                       obscureText: true,
+                      controller: _confirmPasswordController,
                       style: TextStyle(fontSize: 15),
                       decoration: InputDecoration(
                         labelText: "Confirm Password",
@@ -167,28 +170,47 @@ class _SignupFormState extends State<SignupForm> {
                       ),
                       onPressed: _isPasswordMatching
                           ? () async {
-                              String? status = await context
-                                  .read<AuthService>()
-                                  .signUp(
-                                      email: emailController.text.trim(),
-                                      password: passwordController.text.trim())
-                                  .catchError((err) => err);
+                              if (_fNameController.text == "") {
+                                customSnackBar(
+                                    context, "First Name cannot be empty");
+                              } else if (_lNameController.text == "") {
+                                customSnackBar(
+                                    context, "Last Name cannot be empty");
+                              }
+                              if (_passwordController.text.length >= 8) {
+                                String? status = await context
+                                    .read<AuthService>()
+                                    .signUp(
+                                        email: _emailController.text.trim(),
+                                        password:
+                                            _passwordController.text.trim())
+                                    .catchError((err) => err);
 
-                              customSnackBar(context, status!);
+                                if (status == "Signed up successfully") {
+                                  UserData newUser = UserData(
+                                    id: FirebaseAuth.instance.currentUser!.uid,
+                                    email: _emailController.text.trim(),
+                                    firstName: _fNameController.text.trim(),
+                                    lastName: _lNameController.text.trim(),
+                                  );
 
-                              UserData newUser = UserData(
-                                id: FirebaseAuth.instance.currentUser!.uid,
-                                email: emailController.text.trim(),
-                                firstName: fNameController.text.trim(),
-                                lastName: lNameController.text.trim(),
-                              );
+                                  await context
+                                      .read<UserDA>()
+                                      .addUser(newUser)
+                                      .catchError((err) => err);
 
-                              await context
-                                  .read<UserDA>()
-                                  .addUser(newUser)
-                                  .catchError((err) => err);
-
-                              Navigator.pushReplacementNamed(context, '/');
+                                  Navigator.pushReplacementNamed(context, '/');
+                                } else if (_emailController.text == "")
+                                  customSnackBar(context, "Email is required");
+                              } else {
+                                customSnackBar(context,
+                                    "Password must be 8 characters or longer.");
+                                setState(() {
+                                  _passwordController.text = "";
+                                  _confirmPasswordController.text = "";
+                                  _isPasswordMatching = false;
+                                });
+                              }
                             }
                           : null,
                     ),
