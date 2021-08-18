@@ -35,12 +35,12 @@ Widget Function(BuildContext, AsyncSnapshot<QuerySnapshot<Recipe>>)
               child: CircularProgressIndicator(),
             );
 
-          if (s.hasData)
+          if (s.hasData) {
             return new ListView.builder(
               clipBehavior: Clip.none,
               padding: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * 0.1,
-                vertical: MediaQuery.of(context).size.width * 0.05,
+                vertical: MediaQuery.of(context).size.width * 0.1,
               ),
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, i) {
@@ -53,6 +53,7 @@ Widget Function(BuildContext, AsyncSnapshot<QuerySnapshot<Recipe>>)
                 );
               },
             );
+          }
 
           return Container();
         },

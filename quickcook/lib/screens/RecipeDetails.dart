@@ -114,6 +114,16 @@ class RecipeDetails extends StatelessWidget {
           SizedBox(
             height: 30,
           ),
+          Text(
+            "Preparation",
+            style: TextStyle(
+              fontSize: 18,
+            ),
+          ),
+          Text(_recipe.recipeDesc),
+          SizedBox(
+            height: 30,
+          ),
           Container(
             alignment: Alignment.center,
             child: Row(

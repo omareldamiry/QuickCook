@@ -44,6 +44,23 @@ class _RecipeCardState extends State<RecipeCard> {
     Future<String?> recipePicPath =
         context.read<StorageService>().downloadURL(recipe.recipePicLink);
 
+    Color? timeColor;
+    Color? timeBackgroundColor;
+
+    if (recipe.recipePrepTime <= 5) {
+      timeColor = Colors.green;
+      timeBackgroundColor = Colors.green[200];
+    } else if (recipe.recipePrepTime <= 10) {
+      timeColor = Colors.yellow;
+      timeBackgroundColor = Colors.yellow[200];
+    } else if (recipe.recipePrepTime <= 20) {
+      timeColor = Colors.orange;
+      timeBackgroundColor = Colors.orange[200];
+    } else {
+      timeColor = Colors.red;
+      timeBackgroundColor = Colors.red[200];
+    }
+
     return Container(
       margin: EdgeInsets.only(bottom: 40),
       alignment: Alignment.center,
@@ -190,10 +207,32 @@ class _RecipeCardState extends State<RecipeCard> {
                   ]),
               width: screenWidth * 0.8,
               padding: EdgeInsets.all(10),
-              child: Text(
-                "${recipe.recipeName}", //? Placeholder
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              child: Stack(
+                alignment: Alignment.center,
+                clipBehavior: Clip.none,
+                children: [
+                  Text(
+                    "${recipe.recipeName}", //? Placeholder
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Positioned(
+                    right: 10,
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: timeBackgroundColor,
+                      ),
+                      child: Text(
+                        "${recipe.recipePrepTime}",
+                        style: TextStyle(
+                          color: timeColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

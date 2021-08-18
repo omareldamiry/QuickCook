@@ -8,6 +8,7 @@ enum IngredientType {
   Meat,
   Spices,
   Oil,
+  Baking,
 }
 
 class Ingredient {
@@ -22,6 +23,7 @@ class Ingredient {
   }
 
   static List<Ingredient> ingredientsList = [
+    Ingredient(name: "Apples", type: IngredientType.Fruit),
     Ingredient(name: "Eggs", type: IngredientType.Meat),
     Ingredient(name: "Honey", type: IngredientType.Sweetners),
     Ingredient(name: "Flour", type: IngredientType.Grains),
@@ -33,10 +35,13 @@ class Ingredient {
     Ingredient(name: "Olive Oil", type: IngredientType.Oil),
     Ingredient(name: "Pepper", type: IngredientType.Spices),
     Ingredient(name: "Tomatoes", type: IngredientType.Vegetable),
+    Ingredient(name: "Baking Powder", type: IngredientType.Baking),
+    Ingredient(name: "Baking Soda", type: IngredientType.Baking),
   ];
 
   static Map<String, Ingredient> ingredients() {
     return {
+      "Apples": Ingredient(name: "Apples", type: IngredientType.Fruit),
       "Eggs": Ingredient(name: "Eggs", type: IngredientType.Meat),
       "Honey": Ingredient(name: "Honey", type: IngredientType.Sweetners),
       "Flour": Ingredient(name: "Flour", type: IngredientType.Grains),
@@ -48,6 +53,10 @@ class Ingredient {
       "Olive Oil": Ingredient(name: "Olive Oil", type: IngredientType.Oil),
       "Pepper": Ingredient(name: "Pepper", type: IngredientType.Spices),
       "Tomatoes": Ingredient(name: "Tomatoes", type: IngredientType.Vegetable),
+      "Baking Powder":
+          Ingredient(name: "Baking Powder", type: IngredientType.Baking),
+      "Baking Soda":
+          Ingredient(name: "Baking Soda", type: IngredientType.Baking),
     };
   }
 

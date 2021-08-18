@@ -36,6 +36,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
     super.initState();
     if (widget.recipe != null) {
       recipeName.text = widget.recipe!.recipeName;
+      recipeDesc.text = widget.recipe!.recipeDesc;
       calWidget =
           NumericValueInput(count: widget.recipe!.recipeCal, unit: "Cal(s)");
       timeWidget = NumericValueInput(
@@ -117,8 +118,9 @@ class _AddRecipePageState extends State<AddRecipePage> {
                         DoubleWidgetContainer(
                           widget1: imageWidget,
                           widget2: TextFormField(
-                            enabled: false,
-                            maxLength: 50,
+                            controller: recipeDesc,
+                            maxLines: 20,
+                            maxLength: 1000,
                           ),
                           labels: ["Recipe Picture", "Description"],
                         ),
@@ -157,6 +159,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
           Recipe newRecipe = Recipe(
             id: widget.recipe != null ? widget.recipe!.id : "",
             recipeName: recipeName.value.text,
+            recipeDesc: recipeDesc.value.text,
             recipeIngredients: ingredientInput!.ingredients,
             recipeCal: calWidget!.count,
             recipePrepTime: timeWidget!.count,
@@ -267,11 +270,13 @@ class NumericValueInput extends StatefulWidget {
 class _NumericValueInputState extends State<NumericValueInput> {
   int count = 1;
   String unit = "";
+  TextEditingController _countController = TextEditingController();
 
   _NumericValueInputState(this.count, this.unit);
 
   @override
   Widget build(BuildContext context) {
+    _countController.text = count.toString();
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -287,11 +292,38 @@ class _NumericValueInputState extends State<NumericValueInput> {
               if (count > 1)
                 setState(() {
                   count--;
+                  _countController.text = count.toString();
                   widget.count = count;
                 });
             },
           ),
-          Text("$count $unit"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 30,
+                child: TextField(
+                  controller: _countController,
+                  textAlign: TextAlign.center,
+                  textDirection: TextDirection.ltr,
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    if (value != "") {
+                      count = int.parse(value);
+                      widget.count = count;
+                    }
+                  },
+                  decoration: InputDecoration(
+                    isDense: true,
+                  ),
+                ),
+              ),
+              Text(unit),
+            ],
+          ),
+          // Text("$count $unit"),
           IconButton(
               icon: Icon(
                 Icons.chevron_right,
@@ -300,6 +332,7 @@ class _NumericValueInputState extends State<NumericValueInput> {
               onPressed: () {
                 setState(() {
                   count++;
+                  _countController.text = count.toString();
                   widget.count = count;
                 });
               }),

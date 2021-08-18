@@ -36,9 +36,9 @@ class Recipe {
       : this(
           id: jsonID,
           recipeName: json['recipeName']! as String,
-          // recipeDesc: json['recipeDesc']! as String,
-          // recipePrepTime: json['recipePrepTime']! as int,
-          // recipeCal: json['recipeCal']! as int,
+          recipeDesc: json['recipeDesc']! as String,
+          recipePrepTime: json['recipePrepTime']! as int,
+          recipeCal: json['recipeCal']! as int,
           // recipeVidLink: json['recipeVidLink']! as String,
           recipePicLink: json['recipePicLink'] != null
               ? json['recipePicLink']! as String

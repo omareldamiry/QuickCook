@@ -53,6 +53,7 @@ class RecipeDA {
   // ignore: avoid_init_to_null
   Future<QuerySnapshot<Recipe>> getRecipes({List<String>? query = null}) async {
     QuerySnapshot<Recipe> recipesQuerySnapshot = await recipesRef
+        .orderBy("recipePrepTime")
         .where(
           'ingredients',
           arrayContainsAny: query,
@@ -81,6 +82,8 @@ class RecipeDA {
         .catchError((err) {
       print(err);
     });
+
+    favorites.sort((a, b) => a.recipePrepTime.compareTo(b.recipePrepTime));
 
     return favorites;
   }
