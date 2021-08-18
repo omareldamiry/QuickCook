@@ -5,6 +5,7 @@ import 'package:quickcook/models/Recipe.dart';
 import 'package:provider/provider.dart';
 import 'package:quickcook/services/RecipeDA.dart';
 import 'package:quickcook/services/storage_service.dart';
+import 'package:quickcook/utilities/custom-snackbar.dart';
 import 'package:quickcook/widgets/appbar.dart';
 import 'package:quickcook/widgets/double-widget-container.dart';
 import 'package:quickcook/widgets/image-upload-widget.dart';
@@ -139,54 +140,64 @@ class _AddRecipePageState extends State<AddRecipePage> {
           color: Colors.white,
         ),
         onPressed: () async {
-          String filePath = "";
-          String fileName = "";
-          if (imageWidget.img != null) {
-            filePath = imageWidget.img!.path;
-            fileName = imageWidget.img!.name;
-          }
-          String dest = "/imgs/recipepics/";
-
-          String newRecipePicLink;
-
-          if (imageWidget.img != null) {
-            newRecipePicLink = dest + imageWidget.img!.name;
-          } else if (widget.recipe != null) {
-            newRecipePicLink = widget.recipe!.recipePicLink;
+          if(ingredientInput!.ingredients.length == 0)
+          if(calWidget!.count < 0){
+            customSnackBar(
+                context, "Calories cannot be less than 1 calorie");
+          }else
+          if (timeWidget!.count < 1) {
+            customSnackBar(
+                context, "Preparation time cannot be less than 1 minute");
           } else {
-            newRecipePicLink = "/imgs/recipepics/default_recipepic.jpg";
-          }
-          Recipe newRecipe = Recipe(
-            id: widget.recipe != null ? widget.recipe!.id : "",
-            recipeName: recipeName.value.text,
-            recipeDesc: recipeDesc.value.text,
-            recipeIngredients: ingredientInput!.ingredients,
-            recipeCal: calWidget!.count,
-            recipeRating:
-                widget.recipe != null ? widget.recipe!.recipeRating : 0.0,
-            recipePrepTime: timeWidget!.count,
-            recipeOwner: FirebaseAuth.instance.currentUser!.email!,
-            recipePicLink: newRecipePicLink,
-          );
+            String filePath = "";
+            String fileName = "";
+            if (imageWidget.img != null) {
+              filePath = imageWidget.img!.path;
+              fileName = imageWidget.img!.name;
+            }
+            String dest = "/imgs/recipepics/";
 
-          if (widget.mode == "add") {
-            if (newRecipePicLink != "/imgs/recipepics/default_recipepic.jpg")
-              await context
-                  .read<StorageService>()
-                  .uploadFile(filePath, fileName, dest);
-            await context.read<RecipeDA>().addRecipe(newRecipe);
-          } else {
-            print(newRecipe.toJson());
-            if (imageWidget.img != null &&
-                newRecipePicLink != "/imgs/recipepics/default_recipepic.jpg")
-              await context
-                  .read<StorageService>()
-                  .uploadFile(filePath, fileName, dest);
-            await context.read<RecipeDA>().editRecipe(newRecipe);
-          }
+            String newRecipePicLink;
 
-          Navigator.pop(context);
-          Navigator.pushReplacementNamed(context, '/myrecipes');
+            if (imageWidget.img != null) {
+              newRecipePicLink = dest + imageWidget.img!.name;
+            } else if (widget.recipe != null) {
+              newRecipePicLink = widget.recipe!.recipePicLink;
+            } else {
+              newRecipePicLink = "/imgs/recipepics/default_recipepic.jpg";
+            }
+            Recipe newRecipe = Recipe(
+              id: widget.recipe != null ? widget.recipe!.id : "",
+              recipeName: recipeName.value.text,
+              recipeDesc: recipeDesc.value.text,
+              recipeIngredients: ingredientInput!.ingredients,
+              recipeCal: calWidget!.count,
+              recipeRating:
+                  widget.recipe != null ? widget.recipe!.recipeRating : 0.0,
+              recipePrepTime: timeWidget!.count,
+              recipeOwner: FirebaseAuth.instance.currentUser!.email!,
+              recipePicLink: newRecipePicLink,
+            );
+
+            if (widget.mode == "add") {
+              if (newRecipePicLink != "/imgs/recipepics/default_recipepic.jpg")
+                await context
+                    .read<StorageService>()
+                    .uploadFile(filePath, fileName, dest);
+              await context.read<RecipeDA>().addRecipe(newRecipe);
+            } else {
+              print(newRecipe.toJson());
+              if (imageWidget.img != null &&
+                  newRecipePicLink != "/imgs/recipepics/default_recipepic.jpg")
+                await context
+                    .read<StorageService>()
+                    .uploadFile(filePath, fileName, dest);
+              await context.read<RecipeDA>().editRecipe(newRecipe);
+            }
+
+            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context, '/myrecipes');
+          }
         },
       ),
     );
@@ -246,7 +257,6 @@ class _IngredientInputState extends State<IngredientInput> {
   void refresh(List<Ingredient> _ingredients) {
     setState(() {
       ingredients = _ingredients;
-      // ingredientCount = _ingredients.length;
       widget.ingredients = _ingredients;
     });
   }

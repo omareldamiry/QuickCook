@@ -4,7 +4,6 @@ import 'package:quickcook/utilities/current-user.dart';
 import 'package:quickcook/widgets/appbar.dart';
 import 'package:quickcook/widgets/drawer.dart';
 import 'package:provider/provider.dart';
-import 'package:quickcook/screens/SearchPage.dart';
 
 import '../utilities/RecipeHandler.dart';
 

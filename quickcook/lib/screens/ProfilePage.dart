@@ -375,6 +375,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         email: widget.user.email,
                         firstName: widget.user.firstName,
                         lastName: widget.user.lastName,
+                        isAdmin: widget.user.isAdmin,
                         profilePic: dest + fileName,
                       );
 
