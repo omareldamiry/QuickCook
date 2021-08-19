@@ -8,7 +8,6 @@
 .buildlog/
 .history
 .svn/
-assets/
 lib/models/Cuisine.dart
 lib/models/Diet.dart
 
