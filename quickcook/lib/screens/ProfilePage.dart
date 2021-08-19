@@ -204,18 +204,28 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             TextButton(
                               onPressed: () async {
-                                if (_newPass.text.isNotEmpty &&
-                                    _newPass.text == _newPassConfirm.text) {
-                                  await context
-                                      .read<AuthService>()
-                                      .changePassword(
-                                          _oldPass.text, _newPass.text);
-                                  Navigator.pop(context);
-                                  customSnackBar(context,
-                                      "Your password has been changed!");
+                                if (_oldPass.text.isNotEmpty) {
+                                  if (_newPass.text.isNotEmpty &&
+                                      _newPass.text == _newPassConfirm.text) {
+                                    if (_newPass.text != _oldPass.text) {
+                                      await context
+                                          .read<AuthService>()
+                                          .changePassword(
+                                              _oldPass.text, _newPass.text);
+                                      Navigator.pop(context);
+                                      customSnackBar(context,
+                                          "Your password has been changed!");
+                                    } else {
+                                      customSnackBar(context,
+                                          "New password cannot be the same as the old password");
+                                    }
+                                  } else {
+                                    customSnackBar(context,
+                                        "Invalid input(s). Please try again");
+                                  }
                                 } else {
                                   customSnackBar(context,
-                                      "Invalid input(s). Please try again");
+                                      "Please enter your old password");
                                 }
                               },
                               child: Text("Confirm"),

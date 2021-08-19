@@ -28,6 +28,7 @@ class Ingredient {
     Ingredient(name: "Eggs", type: IngredientType.Meat),
     Ingredient(name: "Honey", type: IngredientType.Sweetners),
     Ingredient(name: "Flour", type: IngredientType.Grains),
+    Ingredient(name: "Rice", type: IngredientType.Grains),
     Ingredient(name: "Sugar", type: IngredientType.Sweetners),
     Ingredient(name: "Brown Sugar", type: IngredientType.Sweetners),
     Ingredient(name: "Salt", type: IngredientType.Spices),
@@ -54,6 +55,7 @@ class Ingredient {
       "Eggs": Ingredient(name: "Eggs", type: IngredientType.Meat),
       "Honey": Ingredient(name: "Honey", type: IngredientType.Sweetners),
       "Flour": Ingredient(name: "Flour", type: IngredientType.Grains),
+      "Rice": Ingredient(name: "Rice", type: IngredientType.Grains),
       "Sugar": Ingredient(name: "Sugar", type: IngredientType.Sweetners),
       "Brown Sugar":
           Ingredient(name: "Brown Sugar", type: IngredientType.Sweetners),

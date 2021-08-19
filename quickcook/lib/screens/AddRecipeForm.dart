@@ -140,12 +140,14 @@ class _AddRecipePageState extends State<AddRecipePage> {
           color: Colors.white,
         ),
         onPressed: () async {
-          if(ingredientInput!.ingredients.length == 0)
-          if(calWidget!.count < 0){
+          if (recipeName.text == "") {
+            customSnackBar(context, "Recipe name cannot be empty");
+          } else if (ingredientInput!.ingredients.length < 2) {
             customSnackBar(
-                context, "Calories cannot be less than 1 calorie");
-          }else
-          if (timeWidget!.count < 1) {
+                context, "A recipe must have at least 2 ingredients");
+          } else if (calWidget!.count < 1) {
+            customSnackBar(context, "Calories cannot be less than 1 calorie");
+          } else if (timeWidget!.count < 1) {
             customSnackBar(
                 context, "Preparation time cannot be less than 1 minute");
           } else {
@@ -169,7 +171,9 @@ class _AddRecipePageState extends State<AddRecipePage> {
             Recipe newRecipe = Recipe(
               id: widget.recipe != null ? widget.recipe!.id : "",
               recipeName: recipeName.value.text,
-              recipeDesc: recipeDesc.value.text,
+              recipeDesc: recipeDesc.text != ""
+                  ? recipeDesc.value.text
+                  : "No preparation steps for this recipe",
               recipeIngredients: ingredientInput!.ingredients,
               recipeCal: calWidget!.count,
               recipeRating:
