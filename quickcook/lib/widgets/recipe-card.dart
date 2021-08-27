@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:quickcook/services/UserDA.dart';
 import 'package:quickcook/services/storage_service.dart';
 import 'package:quickcook/utilities/current-user.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 // ignore: must_be_immutable
 class RecipeCard extends StatefulWidget {
@@ -191,6 +192,27 @@ class _RecipeCardState extends State<RecipeCard> {
                 });
               }
             },
+          ),
+          Positioned(
+            bottom: 25,
+            left: 10,
+            child: Container(
+              alignment: Alignment.center,
+              child: RatingBar.builder(
+                ignoreGestures: true,
+                itemSize: 30,
+                initialRating: recipe.recipeRating,
+                allowHalfRating: true,
+                minRating: 1,
+                direction: Axis.horizontal,
+                itemCount: 5,
+                itemBuilder: (context, _) => Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                onRatingUpdate: (value) {},
+              ),
+            ),
           ),
           Positioned(
             bottom: -20,
